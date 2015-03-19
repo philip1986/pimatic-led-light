@@ -1,0 +1,31 @@
+
+.light-container {}
+
+.light-label-container, .light-color-container, .light-brightness-container {
+    float: left;
+}
+
+.light-color-container{
+  padding-left: 15px;
+}
+
+.light-label-container{
+  width: 20%;
+  margin-right: 5px;
+}
+
+.light-brightness-container .ui-slider {
+  margin-top: 3px;
+}
+
+.light-brightness-container {
+  width: 40%;
+  height: 30px;
+  margin-left: 5px;
+}
+
+.light-power-container {
+  /*margin-right: 20%;*/
+  /*margin-top: -20px;*/
+}
+
