@@ -1,6 +1,4 @@
-
-
-$(document).on( "templateinit", (event) ->
+$(document).on 'templateinit', (event) ->
 
   # define the item class
   class IwyLightMasterItem extends pimatic.DeviceItem
@@ -9,13 +7,14 @@ $(document).on( "templateinit", (event) ->
 
       @id = templData.deviceId
 
+      @debounceTimerId = null
+
       @power = null
       @brightness = null
       @color = null
 
     afterRender: (elements) ->
       super
-
       ### Apply UI elements ###
 
       @powerSlider = $(elements).find('.light-power')
@@ -53,11 +52,19 @@ $(document).on( "templateinit", (event) ->
       @brightnessSlider.val(@brightness()).trigger 'change', [origin: 'remote']
       @powerSlider.val(@power()).trigger 'change', [origin: 'remote']
 
+    _debounce: (fn, timeout) ->
+      clearTimeout @debounceTimerId if @debounceTimerId
+      @debounceTimerId = setTimeout fn, timeout
+
+
     _onLocalChange: (element, fn) ->
       $('#index').on "change", "#item-lists ##{@id} .light-#{element}", (e, payload) =>
         return if payload?.origin is 'remote'
         return if @[element]?() is $(e.target).val()
-        fn.call @, $(e.target).val()
+        @_debounce =>
+          fn.call @, $(e.target).val()
+        , 50
+
 
     _onRemoteChange: (attributeString, el) ->
       attribute = @getAttribute(attributeString)
@@ -92,7 +99,3 @@ $(document).on( "templateinit", (event) ->
 
   # register the item-class
   pimatic.templateClasses['iwy-light-master'] = IwyLightMasterItem
-)
-
-
-
