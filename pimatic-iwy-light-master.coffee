@@ -147,10 +147,10 @@ module.exports = (env) ->
 
     setPower: (newPower) ->
       return Promise.resolve() if @power is newPower
-      if @power is 'on'
+      if newPower is 'on'
         @device.switchOn @_updateState.bind(@)
 
-      if @power is 'off'
+      if newPower is 'off'
         @device.switchOff @_updateState.bind(@)
 
       Promise.resolve()
