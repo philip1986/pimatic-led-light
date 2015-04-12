@@ -93,41 +93,52 @@ module.exports = (env) ->
       @name = @config.name
       @id = @config.id
 
-      @device = new Iwy_master()
+      @device = new Iwy_master config.addr
       @device.on 'error', (err) ->
-        console.log 'light error:', err
+        console.debug 'light error:', err
 
       @power = null
       @color = null
       @brightness = null
       @mode = null
 
-      @device.connect config.addr, =>
-        @_sync()
-        setInterval =>
-          @_sync()
-        , 3000
+      @_sync() # sync now
+
       super()
 
+    _updateState: (err, state) ->
+      console.log err if err
+
+      return unless state
+
+      if state.mode is @WHITE_MODE
+        hexColor = ''
+
+      if state.mode is @COLOR_MODE
+        hexColor = '#'
+        hexColor += '0' if state.color.r < 16
+        hexColor += state.color.r.toString(16)
+        hexColor += '0' if state.color.g < 16
+        hexColor += state.color.g.toString(16)
+        hexColor += '0' if state.color.b < 16
+        hexColor += state.color.b.toString(16)
+
+
+      unless @power is state.power
+        @power = state.power
+        @emit 'power', if state.power then 'on' else 'off'
+
+      unless @color is hexColor
+        @color = hexColor
+        @emit 'color', hexColor
+
+      unless @brightness is state.brightness
+        @brightness = state.brightness
+        @emit 'brightness', state.brightness
+
     _sync: ->
-      @device.getState (err, state) =>
-        return unless state
+      @device.getState @_updateState.bind(@)
 
-        if state.mode is @WHITE_MODE
-          hexColor = ''
-
-        if state.mode is @COLOR_MODE
-          hexColor = '#'
-          hexColor += state.color.r.toString(16)
-          hexColor += state.color.g.toString(16)
-          hexColor += state.color.b.toString(16)
-
-        unless @power is state.power
-          @emit 'power', if state.power then 'on' else 'off'
-        unless @color is hexColor
-          @emit 'color', hexColor
-        unless @brightness is state.brightness
-          @emit 'brightness', state.brightness
 
     getPower: -> Promise.resolve @power
     getColor: -> Promise.resolve @color
@@ -136,42 +147,31 @@ module.exports = (env) ->
 
     setPower: (newPower) ->
       return Promise.resolve() if @power is newPower
-      @power = newPower
       if @power is 'on'
-        @device.switchOn =>
-          @_sync()
+        @device.switchOn @_updateState.bind(@)
+
       if @power is 'off'
-        @device.switchOff =>
-          @_sync()
+        @device.switchOff @_updateState.bind(@)
 
       Promise.resolve()
 
     setColor: (newColor) ->
-      if typeof newColor is 'string'
-        newColor = new Color newColor
+      return Promise.resolve() if @color is newColor
 
-      return Promise.resolve() if @color?.rgb() is newColor?.rgb()
-      @color = newColor
+      red  = Number("0x#{newColor[1..2]}")
+      green = Number("0x#{newColor[3..4]}")
+      blue = Number("0x#{newColor[5..6]}")
 
-      {r, g, b} = @color.rgb()
-
-      @device.setColor r, g, b, =>
-        @_sync()
-
+      @device.setColor red, green, blue, @_updateState.bind(@)
       Promise.resolve()
 
     setWhite: ->
-      @color = null
-      @device.setWhite =>
-        @_sync()
+      @device.setWhite @_updateState.bind(@)
       Promise.resolve()
 
     setBrightness: (newBrightness) ->
       return Promise.resolve() if @brightness is newBrightness
-      @brightness = newBrightness
-
-      @device.setBrightness @brightness, =>
-        @_sync()
+      @device.setBrightness newBrightness, @_updateState.bind(@)
       Promise.resolve()
 
 
@@ -250,7 +250,14 @@ module.exports = (env) ->
             .then (temperature) =>
               temperatureColor = new Color()
               hue = 30 + 240 * (30 - temperature) / 60;
-              callback temperatureColor.hsl(hue, 70, 50)
+              temperatureColor.hsl(hue, 70, 50)
+
+              hexColor = '#'
+              hexColor += temperatureColor.rgb().r.toString(16)
+              hexColor += temperatureColor.rgb().g.toString(16)
+              hexColor += temperatureColor.rgb().b.toString(16)
+
+              callback hexColor
         else
           callback @color
 
