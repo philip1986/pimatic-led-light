@@ -5,10 +5,11 @@ module.exports = (env) ->
   Iwy_master = require 'iwy_master'
   _ = require 'lodash'
   assert = require 'cassert'
-
+  Color = require 'color'
 
   M = env.matcher
 
+  color_schema = require './color_schema'
 
   class IwyLightMasterPlugin extends env.plugins.Plugin
 
@@ -19,8 +20,8 @@ module.exports = (env) ->
         configDef: deviceConfigDef
         createCallback: (config) -> return new IwyLightMaster(config)
 
-      @framework.ruleManager.addActionProvider(new AnswerActionProvider(@framework))
-
+      @framework.ruleManager.addActionProvider(new SwitchActionProvider(@framework))
+      @framework.ruleManager.addActionProvider(new ColorActionProvider(@framework))
 
       # wait till all plugins are loaded
       @framework.on "after init", =>
@@ -146,18 +147,21 @@ module.exports = (env) ->
       Promise.resolve()
 
     setColor: (newColor) ->
-      return Promise.resolve() if @color is newColor
+      if typeof newColor is 'string'
+        newColor = new Color newColor
+
+      return Promise.resolve() if @color?.rgb() is newColor?.rgb()
       @color = newColor
 
-      red  = Number("0x#{@color[1..2]}")
-      green = Number("0x#{@color[3..4]}")
-      blue = Number("0x#{@color[5..6]}")
+      {r, g, b} = @color.rgb()
 
-      @device.setColor red, green, blue, =>
+      @device.setColor r, g, b, =>
         @_sync()
+
       Promise.resolve()
 
     setWhite: ->
+      @color = null
       @device.setWhite =>
         @_sync()
       Promise.resolve()
@@ -171,18 +175,17 @@ module.exports = (env) ->
       Promise.resolve()
 
 
-  class AnswerActionHandler extends env.actions.ActionHandler
+  class SwitchActionHandler extends env.actions.ActionHandler
     constructor: (@device, @state) ->
 
     executeAction: (simulate) =>
-      console.log 'called'
       if simulate
-        return Promise.resolve(__("would log 42"))
+        return Promise.resolve(__("would switch #{@state}"))
       else
         @device.setPower @state
         return Promise.resolve(__("switched #{@state}"))
 
-  class AnswerActionProvider extends env.actions.ActionProvider
+  class SwitchActionProvider extends env.actions.ActionProvider
     constructor: (@framework) ->
 
     parseAction: (input, context) =>
@@ -200,7 +203,6 @@ module.exports = (env) ->
       # device name -> on|off
       m.matchDevice iwyDevices, (m, d) ->
         m.match [' on', ' off'], (m, s) ->
-          console.log d
 
           # Already had a match with another device?
           if device? and device.id isnt d.id
@@ -228,7 +230,95 @@ module.exports = (env) ->
         return {
           token: match
           nextInput: input.substring(match.length)
-          actionHandler: new AnswerActionHandler(device, state)
+          actionHandler: new SwitchActionHandler(device, state)
+        }
+      else
+        return null
+
+
+  class ColorActionHandler extends env.actions.ActionHandler
+    constructor: (@provider, @device, @color, @variable) ->
+      @_variableManager = null
+
+      if @variable
+        @_variableManager = @provider.framework.variableManager
+
+    executeAction: (simulate) =>
+      getColor = (callback) =>
+        if @variable
+          @_variableManager.evaluateStringExpression([@variable])
+            .then (temperature) =>
+              temperatureColor = new Color()
+              hue = 30 + 240 * (30 - temperature) / 60;
+              callback temperatureColor.hsl(hue, 70, 50)
+        else
+          callback @color
+
+      getColor (color) =>
+        if simulate
+          return Promise.resolve(__("would log set color #{color}"))
+        else
+          @device.setColor color
+          return Promise.resolve(__("set color #{color}"))
+
+  class ColorActionProvider extends env.actions.ActionProvider
+    constructor: (@framework) ->
+
+    parseAction: (input, context) =>
+      iwyDevices = _(@framework.deviceManager.devices).values().filter(
+        (device) => device.hasAction("setColor")
+      ).value()
+
+      hadPrefix = false
+
+      # Try to match the input string with: set ->
+      m = M(input, context).match(['set '])
+
+      device = null
+      color = null
+      match = null
+      variable = null
+
+      # device name -> color
+      m.matchDevice iwyDevices, (m, d) ->
+        # Already had a match with another device?
+        if device? and device.id isnt d.id
+          context?.addError(""""#{input.trim()}" is ambiguous.""")
+          return
+
+        device = d
+
+        m.match [' to '], (m) ->
+          m.or [
+            # rgb hex like #00FF00
+            (m) ->
+              # TODO: forward pattern to UI
+              m.match [/(#[a-fA-F\d]{6})(.*)/], (m, s) ->
+                color = s.trim()
+                match = m.getFullMatch()
+
+            # color name like red
+            (m) -> m.match _.keys(color_schema), (m, s) ->
+                color = color_schema[s]
+                match = m.getFullMatch()
+
+            # color by temprature from variable like $weather.temperature = 30
+            (m) ->
+              m.match ['temperature based color by variable '], (m) ->
+                m.matchVariable (m, s) ->
+                  variable = s
+                  match = m.getFullMatch()
+          ]
+
+      if match?
+        assert device?
+        # either variable or color should be set
+        assert variable? ^ color?
+        assert typeof match is "string"
+        return {
+          token: match
+          nextInput: input.substring(match.length)
+          actionHandler: new ColorActionHandler(@, device, color, variable)
         }
       else
         return null
