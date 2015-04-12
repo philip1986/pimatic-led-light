@@ -1,17 +1,28 @@
-pimatic-plugin-template
+pimatic-iwy-light-master
 =======================
 
-See the [development guide](http://pimatic.org/guide/development/required-skills-readings/) for
-usage.
+A pimatic plugin for [IWY Light Master] (http://iwy-light.de/gb/iwy-starter-sets/iwy-color-single-set-9w.html)
 
-Some Tips:
+## Confuguration
 
-###Adding package dependencies
-* You can add other package dependencies by running `npm install something --save`. With the `--save`
-  option npm will auto add the installed dependency in your `package.json`
-* You can always install all dependencies in the package.json with `npm install`
+```
+    {
+      "id": "some_id",
+      "name": "some_name",
+      "class": "IwyLightMaster",
+      "location": "living room",
+      "addr": "xxx.xxx.xxx.xxx"
+    }
 
-###Commit your changes to git
-* Add all edited files with `git add file`. For example: `git add package.json` then commit you changes 
-  with `git commit`.
-* After that you can push you commited work to github: `git push`
+```
+
+## Features
+
+- switch on/off (UI and rules)
+- dim light (UI and rules)
+- set color
+  - by color picker (in UI)
+  - by name (in rules e.g. red)
+  - by hex (in rules e.g. #00FF00)
+  - by teampature variable from weather plugin (in rules e.g. $weather.temperature)
+
