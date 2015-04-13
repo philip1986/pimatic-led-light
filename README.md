@@ -19,7 +19,7 @@ A pimatic plugin for [IWY Light Master] (http://iwy-light.de/gb/iwy-starter-sets
 ## Features
 
 - switch on/off (UI and rules)
-- dim light (UI and rules)
+- dim light (UI)
 - set color
   - by color picker (in UI)
   - by name (in rules e.g. red)
