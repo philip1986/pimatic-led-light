@@ -20,7 +20,7 @@ module.exports = (env) ->
         configDef: deviceConfigDef
         createCallback: (config) -> return new IwyLightMaster(config)
 
-      @framework.ruleManager.addActionProvider(new SwitchActionProvider(@framework))
+      # @framework.ruleManager.addActionProvider(new SwitchActionProvider(@framework))
       @framework.ruleManager.addActionProvider(new ColorActionProvider(@framework))
 
       # wait till all plugins are loaded
@@ -60,15 +60,9 @@ module.exports = (env) ->
        type: t.number
        unit: '%'
 
-
     template: "iwy-light-master"
 
     actions:
-      setPower:
-        description: "turns the light on or off"
-        params:
-          state:
-            type: t.string
       getPower:
         description: "returns the current state of the light"
         returns:
@@ -76,6 +70,12 @@ module.exports = (env) ->
             type: t.boolean
       getMode:
         description: "returns the color mode"
+      turnOn:
+        description: "turns the light on"
+      turnOff:
+        description: "turns the light off"
+      toggle:
+        description: "turns the light off or off"
       setWhite:
         description: "set the light to white mode"
       setColor:
@@ -123,7 +123,6 @@ module.exports = (env) ->
         hexColor += '0' if state.color.b < 16
         hexColor += state.color.b.toString(16)
 
-
       unless @power is state.power
         @power = state.power
         @emit 'power', if state.power then 'on' else 'off'
@@ -139,19 +138,26 @@ module.exports = (env) ->
     _sync: ->
       @device.getState @_updateState.bind(@)
 
-
     getPower: -> Promise.resolve @power
     getColor: -> Promise.resolve @color
     getMode: -> Promise.resolve @mode
     getBrightness: -> Promise.resolve @brightness
 
-    setPower: (newPower) ->
-      return Promise.resolve() if @power is newPower
-      if newPower is 'on'
-        @device.switchOn @_updateState.bind(@)
+    turnOn: ->
+      return Promise.resolve() if @power is 'on'
+      @device.switchOn @_updateState.bind(@)
+      Promise.resolve()
 
-      if newPower is 'off'
-        @device.switchOff @_updateState.bind(@)
+    turnOff: ->
+      return Promise.resolve() if @power is 'off'
+      @device.switchOff @_updateState.bind(@)
+      Promise.resolve()
+
+    toggle: ->
+      if @power is 'on'
+        @device.switchOn @_updateState.bind(@)
+      else
+        @device.switchOn @_updateState.bind(@)
 
       Promise.resolve()
 
@@ -173,67 +179,6 @@ module.exports = (env) ->
       return Promise.resolve() if @brightness is newBrightness
       @device.setBrightness newBrightness, @_updateState.bind(@)
       Promise.resolve()
-
-
-  class SwitchActionHandler extends env.actions.ActionHandler
-    constructor: (@device, @state) ->
-
-    executeAction: (simulate) =>
-      if simulate
-        return Promise.resolve(__("would switch #{@state}"))
-      else
-        @device.setPower @state
-        return Promise.resolve(__("switched #{@state}"))
-
-  class SwitchActionProvider extends env.actions.ActionProvider
-    constructor: (@framework) ->
-
-    parseAction: (input, context) =>
-      iwyDevices = _(@framework.deviceManager.devices).values().filter(
-        (device) => device.hasAction("setPower")
-      ).value()
-
-      # Try to match the input string with: turn|switch ->
-      m = M(input, context).match(['turn ', 'switch '])
-
-      device = null
-      state = null
-      match = null
-
-      # device name -> on|off
-      m.matchDevice iwyDevices, (m, d) ->
-        m.match [' on', ' off'], (m, s) ->
-
-          # Already had a match with another device?
-          if device? and device.id isnt d.id
-            context?.addError(""""#{input.trim()}" is ambiguous.""")
-            return
-          device = d
-          state = s.trim()
-          match = m.getFullMatch()
-
-      # on|off -> deviceName
-      m.match ['on ', 'off '], (m, s) ->
-        m.matchDevice iwyDevices, (m, d) ->
-          # Already had a match with another device?
-          if device? and device.id isnt d.id
-            context?.addError(""""#{input.trim()}" is ambiguous.""")
-            return
-          device = d
-          state = s.trim()
-          match = m.getFullMatch()
-
-      if match?
-        assert device?
-        assert state in ['on', 'off']
-        assert typeof match is "string"
-        return {
-          token: match
-          nextInput: input.substring(match.length)
-          actionHandler: new SwitchActionHandler(device, state)
-        }
-      else
-        return null
 
 
   class ColorActionHandler extends env.actions.ActionHandler

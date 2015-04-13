@@ -56,7 +56,6 @@ $(document).on 'templateinit', (event) ->
       clearTimeout @debounceTimerId if @debounceTimerId
       @debounceTimerId = setTimeout fn, timeout
 
-
     _onLocalChange: (element, fn) ->
       $('#index').on "change", "#item-lists ##{@id} .light-#{element}", (e, payload) =>
         return if payload?.origin is 'remote'
@@ -64,7 +63,6 @@ $(document).on 'templateinit', (event) ->
         @_debounce =>
           fn.call @, $(e.target).val()
         , 50
-
 
     _onRemoteChange: (attributeString, el) ->
       attribute = @getAttribute(attributeString)
@@ -78,9 +76,15 @@ $(document).on 'templateinit', (event) ->
         el.val(@[attributeString]()).trigger 'change', [origin: 'remote']
 
     _setPower: (state) ->
-      @device.rest.setPower({state: state}, global: no)
-        .done(ajaxShowToast)
-        .fail(ajaxAlertFail)
+
+      if state is 'on'
+        @device.rest.turnOn({}, global: no)
+          .done(ajaxShowToast)
+          .fail(ajaxAlertFail)
+      else
+        @device.rest.turnOff({}, global: no)
+          .done(ajaxShowToast)
+          .fail(ajaxAlertFail)
 
     _setColor: (colorCode) ->
       unless colorCode
