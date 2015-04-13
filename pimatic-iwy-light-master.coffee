@@ -95,7 +95,7 @@ module.exports = (env) ->
 
       @device = new Iwy_master config.addr
       @device.on 'error', (err) ->
-        console.debug 'light error:', err
+        env.logger.warn 'light error:', err
 
       @power = null
       @color = null
@@ -107,7 +107,7 @@ module.exports = (env) ->
       super()
 
     _updateState: (err, state) ->
-      console.log err if err
+      env.logger.error err if err
 
       return unless state
 
