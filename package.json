@@ -1,5 +1,5 @@
 {
-  "name": "pimatic-plugin-iwy-light-master",
+  "name": "pimatic-iwy-light-master",
   "description": "Control IWY-Light Master",
   "author": "Philip Patzer <philip.patzer@gmail.com> (https://github.com/philip1986)",
   "main": "pimatic-iwy-light-master",
