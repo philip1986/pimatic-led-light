@@ -8,10 +8,10 @@
     "README.md",
     "iwy-light-master-config-schema.coffee"
   ],
-  "version": "0.0.3-0",
+  "version": "0.0.1",
   "repository": {
     "type": "git",
-    "url": "git://github.com/philip1986/pimatic-plugin-iwy-light-master.git"
+    "url": "git://github.com/philip1986/pimatic-iwy-light-master.git"
   },
   "configSchema": "iwy-light-master-schema.coffee",
   "dependencies": {
