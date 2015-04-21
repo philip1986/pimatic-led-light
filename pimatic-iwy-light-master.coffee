@@ -93,7 +93,10 @@ module.exports = (env) ->
       @name = @config.name
       @id = @config.id
 
-      @device = new Iwy_master config.addr
+      unless _.invert(Iwy_master.DEVICES)[@config.device]
+        return env.logger.error 'unknown device'
+
+      @device = new Iwy_master @config.addr, @config.device
       @device.on 'error', (err) ->
         env.logger.warn 'light error:', err
 

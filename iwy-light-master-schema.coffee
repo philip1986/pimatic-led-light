@@ -10,4 +10,7 @@ module.exports = {
     addr:
       description: "IP-Address of light"
       type: "string"
+    device:
+      description: "Device Model (iwy-master | wifi370)"
+      type: "string"
 }

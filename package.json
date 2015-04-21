@@ -17,7 +17,7 @@
   "dependencies": {
     "cassert": "^0.1.2",
     "color": "^0.8.0",
-    "iwy_master": "0.2.0",
+    "iwy_master": "0.2.2",
     "lodash": "^3.5.0"
   },
   "peerDependencies": {

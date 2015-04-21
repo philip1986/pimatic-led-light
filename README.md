@@ -12,6 +12,7 @@ A pimatic plugin for [IWY Light Master] (http://iwy-light.de/gb/iwy-starter-sets
       "class": "IwyLightMaster",
       "location": "living room",
       "addr": "xxx.xxx.xxx.xxx"
+      "device": "iwy-master" | "wifi370"
     }
 
 ```
