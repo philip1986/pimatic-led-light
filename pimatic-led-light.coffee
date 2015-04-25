@@ -29,9 +29,9 @@ module.exports = (env) ->
         # Check if the mobile-frontent was loaded and get a instance
         mobileFrontend = @framework.pluginManager.getPlugin 'mobile-frontend'
         if mobileFrontend?
-          mobileFrontend.registerAssetFile 'js', "pimatic-led-light/app/iwy-light-master.coffee"
-          mobileFrontend.registerAssetFile 'css', "pimatic-led-light/app/iwy-light-master.css"
-          mobileFrontend.registerAssetFile 'html', "pimatic-led-light/app/iwy-light-master.html"
+          mobileFrontend.registerAssetFile 'js', "pimatic-led-light/app/led-light.coffee"
+          mobileFrontend.registerAssetFile 'css', "pimatic-led-light/app/led-light.css"
+          mobileFrontend.registerAssetFile 'html', "pimatic-led-light/app/led-light.html"
           mobileFrontend.registerAssetFile 'js', "pimatic-led-light/app/vendor/spectrum.js"
           mobileFrontend.registerAssetFile 'css', "pimatic-led-light/app/vendor/spectrum.css"
         else
