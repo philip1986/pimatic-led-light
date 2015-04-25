@@ -2,7 +2,8 @@ module.exports = (env) ->
   Promise = env.require 'bluebird'
 
   t = env.require('decl-api').types
-  IwyMaster = require 'iwy_master'
+  IwyMaster = require 'iwyMasterDriver' # just as example
+  Milight = require 'milightDriver' # just as example
   _ = require 'lodash'
   assert = require 'cassert'
   Color = require 'color'
@@ -94,10 +95,24 @@ module.exports = (env) ->
       @name = @config.name
       @id = @config.id
 
-      unless _.invert(IwyMaster.DEVICES)[@config.device]
+      driver = driverOptions = null
+
+      if @config.device in IwyMaster.DEVICES
+        driver = IwyMaster
+        driverOptions =
+          host: @config.addr.ip
+          device: @config.device
+
+      if @config.device in Milight.DEVICES
+        driver = Milight
+        driverOptions =
+          host: @config.addr.ip
+          zoneId: @config.addr.zone
+
+      unless driver
         return env.logger.error 'unknown device'
 
-      @device = new IwyMaster @config.addr, @config.device
+      @device = new driver driverOptions
       @device.on 'error', (err) ->
         env.logger.warn 'light error:', err
 

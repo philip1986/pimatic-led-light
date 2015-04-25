@@ -7,9 +7,9 @@ module.exports = {
       description: "Location of light device"
       type: "string"
     addr:
-      description: "IP-Address of light device"
-      type: "string"
+      description: "Address information of light device"
+      type: "object"
     device:
-      description: "Device Model (iwy-master | wifi370)"
+      description: "Device Model (iwy-master | wifi370 | milight)"
       type: "string"
 }
