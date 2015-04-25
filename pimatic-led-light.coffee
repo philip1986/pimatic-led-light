@@ -17,9 +17,9 @@ module.exports = (env) ->
     init: (app, @framework, @config) =>
       deviceConfigDef = require("./led-light-schema")
 
-      @framework.deviceManager.registerDeviceClass "LedLight",
+      @framework.deviceManager.registerDeviceClass "IWYLed",
         configDef: deviceConfigDef
-        createCallback: (config) -> return new LedLight(config)
+        createCallback: (config) -> return new IWYLed(config)
 
       # @framework.ruleManager.addActionProvider(new SwitchActionProvider(@framework))
       @framework.ruleManager.addActionProvider(new ColorActionProvider(@framework))
@@ -36,10 +36,14 @@ module.exports = (env) ->
           mobileFrontend.registerAssetFile 'css', "pimatic-led-light/app/vendor/spectrum.css"
         else
           env.logger.warn "your plugin could not find the mobile-frontend. No gui will be available"
+          
+  
 
   class LedLight extends env.devices.Device
-    WHITE_MODE: 'WHITE'
-    COLOR_MODE: 'COLOR'
+    _power      : null
+    _color      : null
+    _mode       : null
+    _brightness : null
 
     getTemplateName: -> "led-light"
 
@@ -90,6 +94,65 @@ module.exports = (env) ->
           brightnessValue:
             type: t.number
 
+    getPower: -> Promise.resolve @_power
+    getColor: -> Promise.resolve @_color
+    getMode: -> Promise.resolve @_mode
+    getBrightness: -> Promise.resolve @_brightness
+    
+    _setBrightness: (newBrightness) =>
+      level = parseFloat(newBrightness)
+      assert(not isNaN(level))
+      cassert level >= 0
+      cassert level <= 100
+      if @_brightness is level then return
+      @_brightness = level
+      @emit "brightness", level
+    
+    _setPower: (newPowerState) =>
+      if @_power is newPowerState then return
+      @_power = newPowerState
+      @emit "power"
+      
+    _setColor: (newColor) =>
+      if @_color is newColor then return
+      @_color = newColor
+      @emit "color"
+    
+    _setmode: (newMode) =>
+      if @_mode is newMode then return
+      @_mode = newMode
+      @emit "mode"
+      
+    turnOn: -> @changePowerTo on
+
+    turnOff: -> @changePowerTo off
+      
+    changePowerTo: (powerState) ->
+      throw new Error "Function \"turnOff\" is not implemented!"
+
+    togglePower: ->
+      @getPower().then( (state) => @changePowerTo(!state) )
+      
+    toggleColorMode: ->
+      @getColor().then( (state) => @changeMode(!state) )
+      
+    changeMode: (colorOrWhite) ->
+      throw new Error "Function \"changeMode\" is not implemented!"
+
+    changeColor: (newColor) ->
+      throw new Error "Function \"changeColor\" is not implemented!"
+
+    setToWhite: -> @changeColor false
+      
+    setToColor: -> @changeColor true
+
+    setBrightness: (newBrightness) ->
+      throw new Error "Function \"setBrightness\" is not implemented!"
+      
+  class IWYLed extends LedLight
+    WHITE_MODE: 'WHITE'
+    COLOR_MODE: 'COLOR'
+    
     constructor: (@config) ->
       @name = @config.name
       @id = @config.id
@@ -109,7 +172,7 @@ module.exports = (env) ->
       @_sync() # sync now
 
       super()
-
+      
     _updateState: (err, state) ->
       env.logger.error err if err
 
@@ -126,26 +189,25 @@ module.exports = (env) ->
         hexColor += state.color.g.toString(16)
         hexColor += '0' if state.color.b < 16
         hexColor += state.color.b.toString(16)
+# Not sure if above is needed?        
+      
+      @_setPower(state.power)
+#      unless @power is state.power
+#        @power = state.power
+#        @emit 'power', if state.power then 'on' else 'off'
+      
+      @_setColor(hexColor)
+#      unless @color is hexColor
+#        @color = hexColor
+#        @emit 'color', hexColor
 
-      unless @power is state.power
-        @power = state.power
-        @emit 'power', if state.power then 'on' else 'off'
-
-      unless @color is hexColor
-        @color = hexColor
-        @emit 'color', hexColor
-
-      unless @brightness is state.brightness
-        @brightness = state.brightness
-        @emit 'brightness', state.brightness
+      @_setBrightness(state.brightness)
+#      unless @brightness is state.brightness
+#        @brightness = state.brightness
+#        @emit 'brightness', state.brightness
 
     _sync: ->
       @device.getState @_updateState.bind(@)
-
-    getPower: -> Promise.resolve @power
-    getColor: -> Promise.resolve @color
-    getMode: -> Promise.resolve @mode
-    getBrightness: -> Promise.resolve @brightness
 
     turnOn: ->
       return Promise.resolve() if @power is 'on'
@@ -183,7 +245,43 @@ module.exports = (env) ->
       return Promise.resolve() if @brightness is newBrightness
       @device.setBrightness newBrightness, @_updateState.bind(@)
       Promise.resolve()
+      
+#
+# New functions
+#
+    changePowerTo: (powerState) ->
+      if powerState
+        @device.switchOn @_updateState.bind(@)
+      else
+        @device.switchOn @_updateState.bind(@)
+      Promise.resolve()
+        
+    changeMode: (colorOrWhite) ->
+      if colorOrWhite
+        newColor = @getColor()
+        red  = Number("0x#{newColor[1..2]}")
+        green = Number("0x#{newColor[3..4]}")
+        blue = Number("0x#{newColor[5..6]}")
+        
+        @device.setColor red, green, blue, @_updateState.bind(@)
+      else
+        @device.setWhite @_updateState.bind(@)
+      Promise.resolve()
+      
+    changeColor: (newColor) ->
+      return Promise.resolve() if @color is newColor
 
+      red  = Number("0x#{newColor[1..2]}")
+      green = Number("0x#{newColor[3..4]}")
+      blue = Number("0x#{newColor[5..6]}")
+
+      @device.setColor red, green, blue, @_updateState.bind(@)
+      Promise.resolve()
+        
+  class MilightLed extends LedLight
+  ### 
+  #  New milight class here
+  ###
 
   class ColorActionHandler extends env.actions.ActionHandler
     constructor: (@provider, @device, @color, @variable) ->
