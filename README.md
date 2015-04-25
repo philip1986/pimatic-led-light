@@ -6,7 +6,7 @@ Currently supported:
   - [IWY Light Master] (http://iwy-light.de/gb/iwy-starter-sets/iwy-color-single-set-9w.html)
   - [WIFI370] (http://www.wifiledcontroller.com/#!wifi-370-controller/c1s9b)
 
-## Confuguration
+## Configuration
 
 ```
     {
@@ -14,7 +14,7 @@ Currently supported:
       "name": "some_name",
       "class": "LedLight",
       "location": "living room",
-      "addr": "xxx.xxx.xxx.xxx"
+      "addr": "xxx.xxx.xxx.xxx",
       "device": "iwy-master" | "wifi370"
     }
 ```
