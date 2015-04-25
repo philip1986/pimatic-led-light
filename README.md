@@ -12,7 +12,7 @@ Currently supported:
     {
       "id": "some_id",
       "name": "some_name",
-      "class": "IwyLightMaster",
+      "class": "LedLight",
       "location": "living room",
       "addr": "xxx.xxx.xxx.xxx"
       "device": "iwy-master" | "wifi370"
