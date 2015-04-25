@@ -1,19 +1,14 @@
 {
-  "name": "pimatic-iwy-light-master",
-  "description": "Control IWY-Light Master",
+  "name": "pimatic-led-light",
+  "description": "Control LED lights",
   "author": "Philip Patzer <philip.patzer@gmail.com> (https://github.com/philip1986)",
-  "main": "pimatic-iwy-light-master",
-  "files": [
-    "pimatic-iwy-light-master.coffee",
-    "README.md",
-    "iwy-light-master-config-schema.coffee"
-  ],
-  "version": "0.0.3",
+  "main": "pimatic-led-light",
+  "version": "0.0.1",
   "repository": {
     "type": "git",
-    "url": "git://github.com/philip1986/pimatic-iwy-light-master.git"
+    "url": "git://github.com/philip1986/pimatic-led-light.git"
   },
-  "configSchema": "iwy-light-master-schema.coffee",
+  "configSchema": "led-light-schema.coffee",
   "dependencies": {
     "cassert": "^0.1.2",
     "color": "^0.8.0",

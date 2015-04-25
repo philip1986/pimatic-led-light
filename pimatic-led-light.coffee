@@ -2,7 +2,7 @@ module.exports = (env) ->
   Promise = env.require 'bluebird'
 
   t = env.require('decl-api').types
-  Iwy_master = require 'iwy_master'
+  IwyMaster = require 'iwy_master'
   _ = require 'lodash'
   assert = require 'cassert'
   Color = require 'color'
@@ -11,14 +11,15 @@ module.exports = (env) ->
 
   color_schema = require './color_schema'
 
-  class IwyLightMasterPlugin extends env.plugins.Plugin
+
+  class LedLightPlugin extends env.plugins.Plugin
 
     init: (app, @framework, @config) =>
-      deviceConfigDef = require("./iwy-light-master-schema")
+      deviceConfigDef = require("./led-light-schema")
 
-      @framework.deviceManager.registerDeviceClass "IwyLightMaster",
+      @framework.deviceManager.registerDeviceClass "LedLight",
         configDef: deviceConfigDef
-        createCallback: (config) -> return new IwyLightMaster(config)
+        createCallback: (config) -> return new LedLight(config)
 
       # @framework.ruleManager.addActionProvider(new SwitchActionProvider(@framework))
       @framework.ruleManager.addActionProvider(new ColorActionProvider(@framework))
@@ -28,19 +29,19 @@ module.exports = (env) ->
         # Check if the mobile-frontent was loaded and get a instance
         mobileFrontend = @framework.pluginManager.getPlugin 'mobile-frontend'
         if mobileFrontend?
-          mobileFrontend.registerAssetFile 'js', "pimatic-iwy-light-master/app/iwy-light-master.coffee"
-          mobileFrontend.registerAssetFile 'css', "pimatic-iwy-light-master/app/iwy-light-master.css"
-          mobileFrontend.registerAssetFile 'html', "pimatic-iwy-light-master/app/iwy-light-master.html"
-          mobileFrontend.registerAssetFile 'js', "pimatic-iwy-light-master/app/vendor/spectrum.js"
-          mobileFrontend.registerAssetFile 'css', "pimatic-iwy-light-master/app/vendor/spectrum.css"
+          mobileFrontend.registerAssetFile 'js', "pimatic-led-light/app/iwy-light-master.coffee"
+          mobileFrontend.registerAssetFile 'css', "pimatic-led-light/app/iwy-light-master.css"
+          mobileFrontend.registerAssetFile 'html', "pimatic-led-light/app/iwy-light-master.html"
+          mobileFrontend.registerAssetFile 'js', "pimatic-led-light/app/vendor/spectrum.js"
+          mobileFrontend.registerAssetFile 'css', "pimatic-led-light/app/vendor/spectrum.css"
         else
           env.logger.warn "your plugin could not find the mobile-frontend. No gui will be available"
 
-  class IwyLightMaster extends env.devices.Device
+  class LedLight extends env.devices.Device
     WHITE_MODE: 'WHITE'
     COLOR_MODE: 'COLOR'
 
-    getTemplateName: -> "iwy-light-master"
+    getTemplateName: -> "led-light"
 
     attributes:
       power:
@@ -60,7 +61,7 @@ module.exports = (env) ->
        type: t.number
        unit: '%'
 
-    template: "iwy-light-master"
+    template: "led-light"
 
     actions:
       getPower:
@@ -93,10 +94,10 @@ module.exports = (env) ->
       @name = @config.name
       @id = @config.id
 
-      unless _.invert(Iwy_master.DEVICES)[@config.device]
+      unless _.invert(IwyMaster.DEVICES)[@config.device]
         return env.logger.error 'unknown device'
 
-      @device = new Iwy_master @config.addr, @config.device
+      @device = new IwyMaster @config.addr, @config.device
       @device.on 'error', (err) ->
         env.logger.warn 'light error:', err
 
@@ -278,4 +279,4 @@ module.exports = (env) ->
       else
         return null
 
-  return new IwyLightMasterPlugin()
+  return new LedLightPlugin()

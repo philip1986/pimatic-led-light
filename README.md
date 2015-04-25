@@ -1,7 +1,10 @@
-pimatic-iwy-light-master
+pimatic-led-light
 =======================
 
-A pimatic plugin for [IWY Light Master] (http://iwy-light.de/gb/iwy-starter-sets/iwy-color-single-set-9w.html)
+A pimatic plugin for LED lights resp. LED-Stripes.
+Currently supported:
+  - [IWY Light Master] (http://iwy-light.de/gb/iwy-starter-sets/iwy-color-single-set-9w.html)
+  - [WIFI370] (http://www.wifiledcontroller.com/#!wifi-370-controller/c1s9b)
 
 ## Confuguration
 
@@ -14,7 +17,6 @@ A pimatic plugin for [IWY Light Master] (http://iwy-light.de/gb/iwy-starter-sets
       "addr": "xxx.xxx.xxx.xxx"
       "device": "iwy-master" | "wifi370"
     }
-
 ```
 
 ## Features

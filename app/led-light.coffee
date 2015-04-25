@@ -1,7 +1,7 @@
 $(document).on 'templateinit', (event) ->
 
   # define the item class
-  class IwyLightMasterItem extends pimatic.DeviceItem
+  class LedLightItem extends pimatic.DeviceItem
     constructor: (templData, @device) ->
       super
 
@@ -68,7 +68,7 @@ $(document).on 'templateinit', (event) ->
       attribute = @getAttribute(attributeString)
 
       unless attributeString?
-        throw new Error("A Iwy-Light device needs an #{attributeString} attribute!")
+        throw new Error("A LED-Light device needs an #{attributeString} attribute!")
 
       @[attributeString] = ko.observable attribute.value()
       attribute.value.subscribe (newValue) =>
@@ -102,4 +102,4 @@ $(document).on 'templateinit', (event) ->
         .fail(ajaxAlertFail)
 
   # register the item-class
-  pimatic.templateClasses['iwy-light-master'] = IwyLightMasterItem
+  pimatic.templateClasses['led-light'] = LedLightItem

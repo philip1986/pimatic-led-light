@@ -1,14 +1,13 @@
-# #my-plugin configuration options
-# Declare your config option for your plugin here.
+# #led-light-plugin configuration options
 module.exports = {
-  title: "iwy light master device config schemas"
+  title: "Led light device config schemas"
   type: "object"
   properties:
     location:
-      description: ""
+      description: "Location of light device"
       type: "string"
     addr:
-      description: "IP-Address of light"
+      description: "IP-Address of light device"
       type: "string"
     device:
       description: "Device Model (iwy-master | wifi370)"
