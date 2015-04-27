@@ -6,6 +6,7 @@ module.exports = (env) ->
   _ = require 'lodash'
   assert = require 'cassert'
   Color = require 'color'
+  nodeMilight = require 'node-milight-promise'
 
   M = env.matcher
 
@@ -15,18 +16,22 @@ module.exports = (env) ->
   class LedLightPlugin extends env.plugins.Plugin
 
     init: (app, @framework, @config) =>
-      deviceConfigDef = require("./led-light-schema")
+      deviceConfigDef = require("./device-config-schema.coffee")
 
       @framework.deviceManager.registerDeviceClass "LedLight",
-        configDef: deviceConfigDef
+        configDef: deviceConfigDef.LedLight
         createCallback: (config) -> return new LedLight(config)
+
+      @framework.deviceManager.registerDeviceClass "Milight",
+        configDef: deviceConfigDef.Milight
+        createCallback: (config, lastState) -> return new Milight(config, lastState)
 
       # @framework.ruleManager.addActionProvider(new SwitchActionProvider(@framework))
       @framework.ruleManager.addActionProvider(new ColorActionProvider(@framework))
 
       # wait till all plugins are loaded
       @framework.on "after init", =>
-        # Check if the mobile-frontent was loaded and get a instance
+        # Check if the mobile-frontend was loaded and get a instance
         mobileFrontend = @framework.pluginManager.getPlugin 'mobile-frontend'
         if mobileFrontend?
           mobileFrontend.registerAssetFile 'js', "pimatic-led-light/app/led-light.coffee"
@@ -183,6 +188,116 @@ module.exports = (env) ->
       return Promise.resolve() if @brightness is newBrightness
       @device.setBrightness newBrightness, @_updateState.bind(@)
       Promise.resolve()
+
+
+  class Milight extends env.devices.Device
+
+    getTemplateName: -> "led-light"
+
+    attributes:
+      power:
+        description: 'the current state of the light'
+        type: t.boolean
+        labels: ["on", "off"]
+      color:
+        description: 'color of the light'
+        type: t.string
+        unit: 'hex color'
+      mode:
+        description: 'mode of the light'
+        type: t.boolean
+        labels: ['color', 'white']
+      brightness:
+        description: 'brightness of the light'
+        type: t.number
+        unit: '%'
+
+    template: "led-light"
+
+    actions:
+      getPower:
+        description: "returns the current state of the light"
+        returns:
+          state:
+            type: t.boolean
+      getMode:
+        description: "returns the color mode"
+      turnOn:
+        description: "turns the light on"
+      turnOff:
+        description: "turns the light off"
+      setWhite:
+        description: "set the light to white mode"
+      setColor:
+        description: "set a light color"
+        params:
+          colorCode:
+            type: t.string
+      setBrightness:
+        description: "set the light brightness"
+        params:
+          brightnessValue:
+            type: t.number
+
+    constructor: (@config, lastState) ->
+      @name = @config.name
+      @id = @config.id
+
+      @device = new nodeMilight.MilightController({
+        ip: @config.addr,
+      })
+      @zone = @config.zone
+
+      console.log(lastState)
+
+      @_setPowerTo lastState?.power?.value or false
+      @setBrightness lastState?.brightness?.value or 100
+      @color = lastState?.color?.value or '#FFFFFF'
+      @mode = lastState?.mode?.value or false
+      if @mode is false
+        @setWhite
+      else
+        @setColor @color
+      super()
+
+    getPower: -> Promise.resolve @power
+    getColor: -> Promise.resolve @color
+    getMode: -> Promise.resolve @mode
+    getBrightness: -> Promise.resolve @brightness
+
+    _setAttribute: (attributeName, value) ->
+      console.log("_setAttribute ---", attributeName, value)
+      if @[attributeName] isnt value
+        @[attributeName] = value
+        @emit(attributeName, value)
+
+    turnOn: -> @_setPowerTo true
+    turnOff: -> @_setPowerTo false
+    _setPowerTo: (power) ->
+      if @power isnt power
+        @power = power
+        @emit('power', power)
+        @emit 'power', if power then 'on' else 'off'
+
+      console.log("_setPowerTo ---", power)
+      @device.sendCommands(nodeMilight.commands.rgbw[if power then 'on' else 'off'](@zone))
+
+    setColor: (newColor) ->
+      r = Number("0x#{newColor[1..2]}")
+      g = Number("0x#{newColor[3..4]}")
+      b = Number("0x#{newColor[5..6]}")
+      @_setAttribute('mode', true)
+      @_setAttribute('color', newColor)
+      @device.sendCommands(nodeMilight.commands.rgbw.on(@zone), nodeMilight.commands.rgbw.rgb255(r, g, b))
+
+    setWhite: () ->
+      @_setAttribute('mode', false)
+      @device.sendCommands(nodeMilight.commands.rgbw.whiteMode(@zone))
+      @setBrightness @brightness
+
+    setBrightness: (newBrightness) ->
+      @_setAttribute('brightness', newBrightness)
+      @device.sendCommands(nodeMilight.commands.rgbw.on(@zone), nodeMilight.commands.rgbw.brightness(newBrightness))
 
 
   class ColorActionHandler extends env.actions.ActionHandler
