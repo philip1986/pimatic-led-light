@@ -50,6 +50,8 @@ module.exports = (env) ->
       r = Number("0x#{newColor[1..2]}")
       g = Number("0x#{newColor[3..4]}")
       b = Number("0x#{newColor[5..6]}")
+      if r == 255 && g == 255 && b == 255
+        return @setWhite()
 
       @device.sendCommands(nodeMilight.commands.rgbw.on(@zone), nodeMilight.commands.rgbw.rgb255(r, g, b))
 
