@@ -5,17 +5,32 @@ A pimatic plugin for LED lights resp. LED-Stripes.
 Currently supported:
   - [IWY Light Master] (http://iwy-light.de/gb/iwy-starter-sets/iwy-color-single-set-9w.html)
   - [WIFI370] (http://www.wifiledcontroller.com/#!wifi-370-controller/c1s9b)
+  - [Milight] (http://www.milight.com)
 
 ## Configuration
+
+### For IwyMasten and Wifi370
 
 ```
     {
       "id": "some_id",
       "name": "some_name",
-      "class": "LedLight",
+      "class": "IwyMaster | Wifi370",
+      "location": "living room",
+      "addr": "xxx.xxx.xxx.xxx"
+    }
+```
+
+### For Milight
+
+```
+    {
+      "id": "some_id",
+      "name": "some_name",
+      "class": "Milight",
       "location": "living room",
       "addr": "xxx.xxx.xxx.xxx",
-      "device": "iwy-master" | "wifi370"
+      "zone": "Zone [0 - 4], 0 = switches all zones"
     }
 ```
 
