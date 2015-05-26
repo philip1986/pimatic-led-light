@@ -14,7 +14,6 @@ module.exports = (env) ->
 
       @zone = @config.zone
 
-      #console.dir(lastState)
       initState = _.clone lastState
       for key, value of lastState
         initState[key] = value.value
@@ -23,7 +22,6 @@ module.exports = (env) ->
 
     _updateState: (attr) ->
       state = _.assign @getState(), attr
-      #console.log "------", state, attr
       super null, state
 
     turnOn: ->
