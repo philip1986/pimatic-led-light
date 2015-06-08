@@ -2,16 +2,37 @@ module.exports = (env) ->
   Promise = env.require 'bluebird'
   _ = require 'lodash'
   Color = require 'color'
-  nodeMilight = require 'node-milight-promise'
+  nodeMilightRF24 = require 'MilightRF24Controller'
   BaseLedLight = require('./base')(env)
+  
+  class MilightRF24
+    constructor: (config) ->
+      @.gateway = new nodeMilightRF24({port: @config.MilightRF24Port})
+      @.gateway.open()
+      @.devices = new Array()
+    
+    getDevice: (config, lastState) ->
+      if @.devices[config.id+"_"+config.zone] == undefined
+        @.devices[config.id+"_"+config.zone] = new MilightRF24Zone(config, lastState, @)
+        
+      @.devices[config.id+"_"+config.zone]
+      
+    setColor: (id, zone, color, recurse) ->
+      
+    setBrightnes: (id, zone, brightnes, recurse) ->
+      
+    setWhite: (id, zone, recurse) ->
+      
+    turnOn: (id, zone, recurse) ->
+      
+    turnOff: (id, zone, recurse) ->
+      
+    
+  class MilightRF24Zone extends BaseLedLight
 
-
-  class Milight extends BaseLedLight
-
-    constructor: (@config, lastState) ->
-      @device = new nodeMilight.MilightController
-        ip: @config.addr
-
+    constructor: (@config, lastState, MilightRF24Gateway) ->
+      @gateway = MilightRF24Gateway
+      @id = @config.id
       @zone = @config.zone
 
       initState = _.clone lastState
@@ -65,4 +86,4 @@ module.exports = (env) ->
 
       Promise.resolve()
 
-  return Milight
+  return MilightRF24
