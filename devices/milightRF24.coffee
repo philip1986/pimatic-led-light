@@ -17,7 +17,7 @@ module.exports = (env) ->
         
       @.devices[config.id+"_"+config.zone]
       
-    setColor: (id, zone, color, recurse) ->
+    setColor: (id, zone, r,g,b, recurse) ->
       
     setBrightnes: (id, zone, brightnes, recurse) ->
       
@@ -47,18 +47,20 @@ module.exports = (env) ->
 
     turnOn: ->
       @_updateState power: true
-      @device.sendCommands(nodeMilight.commands.rgbw.on(@zone))
+     
+      @gateway.turnOn(@id, @zone)
       if @mode
         color = Color(@color).rgb()
-        @device.sendCommands(nodeMilight.commands.rgbw.rgb255(color.r, color.g, color.b))
+        @gateway.setColor(@id, @zone, color.r, color.g, color.b, true)
       else
-        @device.sendCommands(nodeMilight.commands.rgbw.whiteMode(@zone))
-        @device.sendCommands(nodeMilight.commands.rgbw.brightness(@brightness))
+        @gateway.setWhite(@id, @zone)
+        
+      @gateway.setBrightnes(@id,@zone, @brightness))
       Promise.resolve()
 
     turnOff: ->
       @_updateState power: false
-      @device.sendCommands(nodeMilight.commands.rgbw.off(@zone))
+      @gateway.turnOff(@id, @zone)
       Promise.resolve()
 
     setColor: (newColor) ->
