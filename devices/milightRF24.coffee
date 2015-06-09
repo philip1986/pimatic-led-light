@@ -68,10 +68,8 @@ module.exports = (env) ->
       @_updateState
         mode: @COLOR_MODE
         color: color
-      @device.sendCommands(
-        nodeMilight.commands.rgbw.on(@zone),
-        nodeMilight.commands.rgbw.rgb255(color.r, color.g, color.b)
-      ) if @power
+      
+      @gateway.setColor(id, zone, color.r, color.g, color.b, true) if @power
       Promise.resolve()
 
     setWhite: () ->
