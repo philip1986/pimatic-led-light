@@ -17,29 +17,54 @@ module.exports = (env) ->
         
       @.devices[config.id+"_"+config.zone]
       
-    setColor: (id, zone, r,g,b, recurse) ->
+    setColor: (id, zone, r,g,b) ->
       
-    setBrightnes: (id, zone, brightnes, recurse) ->
+    setBrightness: (id, zone, brightness) ->
       
-    setWhite: (id, zone, recurse) ->
+    setWhite: (id, zone) ->
       
-    turnOn: (id, zone, recurse) ->
+    turnOn: (id, zone) ->
       
-    turnOff: (id, zone, recurse) ->
+    turnOff: (id, zone) ->
       
     
   class MilightRF24Zone extends BaseLedLight
 
     constructor: (@config, lastState, MilightRF24Gateway) ->
       @gateway = MilightRF24Gateway
-      @id = @config.id
-      @zone = @config.zone
+      @zones = @config.zones
 
       initState = _.clone lastState
       for key, value of lastState
         initState[key] = value.value
       super(initState)
       if @power then @turnOn() else @turnOff()
+      
+      @gateway.on('dataReceived', (data) ->
+        for z in @zones
+          do br = (z) =>
+            unless z.receive is false
+              if z.addr is data.id and z.zone is data.group
+                
+                switch data.button 
+                  when Buttons.AllOn, Buttons.Group1On, Buttons.Group2On, Buttons.Group3On, Buttons.Group4On
+                    @turnOn()
+                  when Buttons.AllOff, Buttons.Group1Off, Buttons.Group2Off, Buttons.Group3Off, Buttons.Group4Off
+                    @turnOff()
+                  when (Buttons.AllOn or Buttons.Group1On or Buttons.Group2On or Buttons.Group3On or Buttons.Group4On) and data.longPress is true
+                    @turnOn()
+                  when Buttons.ColorFader or Buttons.FaderReleased
+                    @setColor(data.color)
+                  when Buttons.BrightnessFader or Buttons.FaderReleased
+                    @setBrightness(data.brightness)
+                  
+                return yes
+                
+              return no
+            
+          if br is yes
+            break
+      )
 
     _updateState: (attr) ->
       state = _.assign @getState(), attr
@@ -48,19 +73,25 @@ module.exports = (env) ->
     turnOn: ->
       @_updateState power: true
      
-      @gateway.turnOn(@id, @zone)
-      if @mode
-        color = Color(@color).rgb()
-        @gateway.setColor(@id, @zone, color.r, color.g, color.b, true)
-      else
-        @gateway.setWhite(@id, @zone)
-        
-      @gateway.setBrightnes(@id,@zone, @brightness))
+      for z in @zones
+        do (z) =>
+          unless z.send is false
+            @gateway.turnOn(@z.addr, @z.zone)
+            if @mode
+              color = Color(@color).rgb()
+              @gateway.setColor(@z.addr, @z.zone, color.r, color.g, color.b, true)
+            else
+              @gateway.setWhite(@z.addr, @z.zone)
+              
+            @gateway.setBrightness(@z.addr, @z.zone, @brightness))
       Promise.resolve()
 
     turnOff: ->
       @_updateState power: false
-      @gateway.turnOff(@id, @zone)
+      for z in @zones
+        do (z) =>
+          unless z.send is false
+            @gateway.turnOff(@z.addr, @z.zone)
       Promise.resolve()
 
     setColor: (newColor) ->
@@ -69,20 +100,27 @@ module.exports = (env) ->
         mode: @COLOR_MODE
         color: color
       
-      @gateway.setColor(id, zone, color.r, color.g, color.b, true) if @power
+      for z in @zones
+        do (z) =>
+          unless z.send is false
+            @gateway.setColor(@z.addr, @z.zone, color.r, color.g, color.b, true) if @power
       Promise.resolve()
 
     setWhite: () ->
       @_updateState mode: @WHITE_MODE
-      @device.sendCommands(nodeMilight.commands.rgbw.whiteMode(@zone)) if @power
+      
+      for z in @zones
+        do (z) =>
+          unless z.send is false
+            @gateway.setWhite(@z.addr, @z.zone) if @power
       Promise.resolve()
 
     setBrightness: (newBrightness) ->
       @_updateState brightness: newBrightness
-      @device.sendCommands(
-        nodeMilight.commands.rgbw.on(@zone),
-        nodeMilight.commands.rgbw.brightness(@brightness)
-      ) if @power
+      for z in @zones
+        do (z) =>
+          unless z.send is false
+            @gateway.setBrightness(@z.addr, @z.zone, newBrightness) if @power
 
       Promise.resolve()
 
