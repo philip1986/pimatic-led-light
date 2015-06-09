@@ -7,26 +7,67 @@ module.exports = (env) ->
   
   class MilightRF24
     constructor: (config) ->
-      @.gateway = new nodeMilightRF24({port: @config.MilightRF24Port})
-      @.gateway.open()
-      @.devices = new Array()
+      @gateway = new nodeMilightRF24({port: @config.MilightRF24Port})
+      @gateway.open()
+      @devices = new Array()
     
     getDevice: (config, lastState) ->
-      if @.devices[config.id+"_"+config.zone] == undefined
-        @.devices[config.id+"_"+config.zone] = new MilightRF24Zone(config, lastState, @)
+      if @devices[config.id+"_"+config.zone] == undefined
+        @devices[config.id+"_"+config.zone] = new MilightRF24Zone(config, lastState, @)
         
-      @.devices[config.id+"_"+config.zone]
+      @devices[config.id+"_"+config.zone]
       
     setColor: (id, zone, r,g,b) ->
+      @gateway.setColor(id, zone, r,g,b)
       
     setBrightness: (id, zone, brightness) ->
+      @gateway.setBrightness(id, zone, brightness)
       
     setWhite: (id, zone) ->
+      switch zone
+        when 0
+          button = Buttons.AllOn
+        when 1
+          button = Buttons.Group1On
+        when 2
+          button = Buttons.Group2On
+        when 3
+          button = Buttons.Group3On
+        when 4
+          button = Buttons.Group4On
+      
+      @gateway.sendButton(id, zone, button, true)
       
     turnOn: (id, zone) ->
+      switch zone
+        when 0
+          button = Buttons.AllOn
+        when 1
+          button = Buttons.Group1On
+        when 2
+          button = Buttons.Group2On
+        when 3
+          button = Buttons.Group3On
+        when 4
+          button = Buttons.Group4On
+      
+      @gateway.sendButton(id, zone, button, false)
       
     turnOff: (id, zone) ->
       
+      switch zone
+        when 0
+          button = Buttons.AllOff
+        when 1
+          button = Buttons.Group1Off
+        when 2
+          button = Buttons.Group2Off
+        when 3
+          button = Buttons.Group3Off
+        when 4
+          button = Buttons.Group4Off
+      
+      @gateway.sendButton(id, zone, button, false)
     
   class MilightRF24Zone extends BaseLedLight
 
