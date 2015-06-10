@@ -3,6 +3,7 @@ module.exports = (env) ->
   # import device wrappers
   IwyMaster = require('./devices/iwy_master')(env)
   Milight = require('./devices/milight')(env)
+  MilightRF24 = require('./devices/milightrf24')(env)
   Wifi370 = require('./devices/wifi370')(env)
 
   # import preadicares and actions
@@ -24,6 +25,10 @@ module.exports = (env) ->
       @framework.deviceManager.registerDeviceClass 'Milight',
         configDef: deviceConfigDef.Milight
         createCallback: (config, lastState) -> return new Milight(config, lastState)
+        
+      @framework.deviceManager.registerDeviceClass 'MilightRF24',
+        configDef: deviceConfigDef.MilightRF24
+        createCallback: (config, lastState) -> return MilightRF24.getDevice(config, lastState)
 
       @framework.ruleManager.addActionProvider(new ColorActionProvider(@framework))
 
