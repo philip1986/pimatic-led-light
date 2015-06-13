@@ -3,7 +3,7 @@ module.exports = (env) ->
   # import device wrappers
   IwyMaster = require('./devices/iwy_master')(env)
   Milight = require('./devices/milight')(env)
-  MilightRF24 = require('./devices/milightrf24')(env)
+  MilightRF24 = require('./devices/milightRF24')(env)
   Wifi370 = require('./devices/wifi370')(env)
 
   # import preadicares and actions
