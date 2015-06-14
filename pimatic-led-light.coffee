@@ -15,7 +15,7 @@ module.exports = (env) ->
       deviceConfigDef = require('./device-config-schema.coffee')
       
       if typeof @config.MilightRF24Port is not "undefined"
-		MilightRF24 = new MilightRF24(@config)
+        MilightRF24 = new MilightRF24(@config)
 
       @framework.deviceManager.registerDeviceClass 'IwyMaster',
         configDef: deviceConfigDef.LedLight
