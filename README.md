@@ -32,6 +32,39 @@ Currently supported:
     }
 ```
 
+### For MilightRF24
+
+Pluginconfig:
+```
+    {
+      "plugin": "led-light",
+      "MilightRF24Port": "/dev/ttyUSB1"
+    }
+```
+
+Devices:
+```
+    "zones": [
+        {
+          "addr": "5927",
+          "zone": 0,
+          "send": true,
+          "receive": true
+        },
+        {
+          "addr": "485D",
+          "zone": 0,
+          "send": true,
+          "receive": true
+        }
+      ]
+```
+You will get your addr when you just add the parameter MilightRF24Port to your config and switch to the debug output in pimatic and change some settings with your remote.
+
+You need for example an arduino nano and connect it to an nrf24 using the standard SPI wiring.
+Get the sketch from here https://github.com/henryk/openmili and change the CE and CSN pin to your wiring.
+
+
 ## Features
 
 - switch on/off (UI and rules)
