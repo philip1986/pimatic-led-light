@@ -13,6 +13,8 @@ module.exports = (env) ->
 
     init: (app, @framework, @config) =>
       deviceConfigDef = require('./device-config-schema.coffee')
+      
+      MilightRF24 = new MilightRF24(@config)
 
       @framework.deviceManager.registerDeviceClass 'IwyMaster',
         configDef: deviceConfigDef.LedLight
