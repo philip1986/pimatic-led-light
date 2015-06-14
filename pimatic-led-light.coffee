@@ -14,7 +14,8 @@ module.exports = (env) ->
     init: (app, @framework, @config) =>
       deviceConfigDef = require('./device-config-schema.coffee')
       
-      MilightRF24 = new MilightRF24(@config)
+      if typeof @config.MilightRF24Port is not "undefined"
+		MilightRF24 = new MilightRF24(@config)
 
       @framework.deviceManager.registerDeviceClass 'IwyMaster',
         configDef: deviceConfigDef.LedLight
@@ -28,9 +29,10 @@ module.exports = (env) ->
         configDef: deviceConfigDef.Milight
         createCallback: (config, lastState) -> return new Milight(config, lastState)
         
-      @framework.deviceManager.registerDeviceClass 'MilightRF24',
-        configDef: deviceConfigDef.MilightRF24
-        createCallback: (config, lastState) -> return MilightRF24.getDevice(config, lastState)
+      if typeof @config.MilightRF24Port is not "undefined"
+        @framework.deviceManager.registerDeviceClass 'MilightRF24',
+          configDef: deviceConfigDef.MilightRF24
+          createCallback: (config, lastState) -> return MilightRF24.getDevice(config, lastState)
 
       @framework.ruleManager.addActionProvider(new ColorActionProvider(@framework))
 
