@@ -32,8 +32,9 @@ module.exports = {
     title: "BlinkStick"
     type: "object"
     properties:
-      id:
-        description: "Id of Blinkstick"
+      serial:
+        description: "serial of Blinkstick"
         type: "string"
+        default: ""
   }
 }

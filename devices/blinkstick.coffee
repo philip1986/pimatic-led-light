@@ -9,7 +9,10 @@ module.exports = (env) ->
   class Blinkstick extends BaseLedLight
 
     constructor: (@config, lastState) ->
-      @device = new nodeBlinkstick.findFirst()
+      if @config.serial
+        @device = new nodeBlinkstick.findBySerial(@config.serial)
+      else
+        @device = new nodeBlinkstick.findFirst()
 
       initState = _.clone lastState
       for key, value of lastState
@@ -23,8 +26,11 @@ module.exports = (env) ->
 
     turnOn: ->
       @_updateState power: true
-      color = Color(@color).rgb()
-      @device.setColor(color.r, color.g, color.b)
+      if @mode
+        color = Color(@color).rgb()
+        @device.setColor(color.r, color.g, color.b)
+      else
+        @device.setColor("#ffffff")
       Promise.resolve()
 
     turnOff: ->
