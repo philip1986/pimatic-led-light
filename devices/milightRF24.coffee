@@ -96,7 +96,7 @@ module.exports = (env) ->
       if @power then @turnOn() else @turnOff()
       
       @gateway.getGateway().on('Received', (data) ->
-        @zones.forEach (z) ->
+        self.zones.forEach (z) ->
           unless z.receive is false
             if z.addr is data.id and z.zone is data.zone
               env.logger.debug data
