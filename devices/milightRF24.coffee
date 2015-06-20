@@ -24,15 +24,15 @@ module.exports = (env) ->
       new MilightRF24Zone(config, lastState, @)
       
     setColor: (id, zone, r,g,b) ->
-      env.logger.debug "Sending Color. Addr:"+id+" Zone:"+zone+" Red:"+r+" Green:"+g+" Blue:"+b
+      env.logger.debug "Sending Color. Addr: #{id} Zone: #{zone} Red: #{r} Green: #{g} Blue: #{b}"
       @gateway.setColor(id, zone, r,g,b)
       
     setBrightness: (id, zone, brightness) ->
-      env.logger.debug "Sending Brightness. Addr:"+id+" Zone:"+zone+" Brightness:"+brightness
+      env.logger.debug "Sending Brightness. Addr:#{id} Zone:#{zone} Brightness:#{brightness}"
       @gateway.setBrightness(id, zone, brightness)
       
     setWhite: (id, zone) ->
-      env.logger.debug "Sending Whitemode. Addr:"+id+" Zone:"+zone
+      env.logger.debug "Sending Whitemode. Addr:#{id} Zone:#{zone}"
       switch zone
         when 0
           button = Buttons.AllOn
@@ -48,7 +48,7 @@ module.exports = (env) ->
       @gateway.sendButton(id, zone, button, true)
       
     turnOn: (id, zone) ->
-      env.logger.debug "Sending On. Addr:"+id+" Zone:"+zone
+      env.logger.debug "Sending On. Addr:#{id} Zone:#{zone}"
       switch zone
         when 0
           button = Buttons.AllOn
@@ -64,7 +64,7 @@ module.exports = (env) ->
       @gateway.sendButton(id, zone, button, false)
       
     turnOff: (id, zone) ->
-      env.logger.debug "Sending Off. Addr:"+id+" Zone:"+zone
+      env.logger.debug "Sending Off. Addr:#{id} Zone:#{zone}"
       switch zone
         when 0
           button = Buttons.AllOff
@@ -96,29 +96,23 @@ module.exports = (env) ->
       if @power then @turnOn() else @turnOff()
       
       @gateway.getGateway().on('Received', (data) ->
-        for z in self.zones
-          do br = (z) =>
-            unless z.receive is false
-              if z.addr is data.id and z.zone is data.zone
-                env.logger.debug data
-                switch data.button 
-                  when Buttons.AllOn, Buttons.Group1On, Buttons.Group2On, Buttons.Group3On, Buttons.Group4On
-                    self.turnOn(false)
-                  when Buttons.AllOff, Buttons.Group1Off, Buttons.Group2Off, Buttons.Group3Off, Buttons.Group4Off
-                    self.turnOff(false)
-                  when (Buttons.AllOn or Buttons.Group1On or Buttons.Group2On or Buttons.Group3On or Buttons.Group4On) and data.longPress is true
-                    self.setWhite(false)
-                  when Buttons.ColorFader or Buttons.FaderReleased
-                    self.setColor("#"+self._num2Hex(data.color.r)+self._num2Hex(data.color.g)+self._num2Hex(data.color.b), false)
-                  when Buttons.BrightnessFader or Buttons.FaderReleased
-                    self.setBrightness(data.brightness, false)
-                  
-                return yes
+        @zones.forEach (z) ->
+          if z.receive
+            if z.addr is data.id and z.zone is data.zone
+              env.logger.debug data
+              switch data.button 
+                when Buttons.AllOn, Buttons.Group1On, Buttons.Group2On, Buttons.Group3On, Buttons.Group4On
+                  self.turnOn(false)
+                when Buttons.AllOff, Buttons.Group1Off, Buttons.Group2Off, Buttons.Group3Off, Buttons.Group4Off
+                  self.turnOff(false)
+                when (Buttons.AllOn or Buttons.Group1On or Buttons.Group2On or Buttons.Group3On or Buttons.Group4On) and data.longPress is true
+                  self.setWhite(false)
+                when Buttons.ColorFader or Buttons.FaderReleased
+                  self.setColor("#"+self._num2Hex(data.color.r)+self._num2Hex(data.color.g)+self._num2Hex(data.color.b), false)
+                when Buttons.BrightnessFader or Buttons.FaderReleased
+                  self.setBrightness(data.brightness, false)
                 
-              return no
-            
-          if br is yes
-            break
+              break
       )
 
     _num2Hex: (s) ->
@@ -132,41 +126,39 @@ module.exports = (env) ->
       super null, state
 
     turnOn: (send) ->
-      if typeof send is "undefined"
+      if send?
         send = true
         
       env.logger.debug "Turn on"
       self = @
       @_updateState power: true
       
-      for z in @zones
-        do (z) =>
-          unless z.send is false or send is false
-            self.gateway.turnOn(z.addr, z.zone)
-            if self.mode
-              color = Color(self.color).rgb()
-              self.gateway.setColor(z.addr, z.zone, color.r, color.g, color.b, true)
-            else
-              self.gateway.setWhite(z.addr, z.zone)
-              
-            self.gateway.setBrightness(z.addr, z.zone, self.brightness)
+      @zones.forEach (z) ->
+        if z.send and send
+          self.gateway.turnOn(z.addr, z.zone)
+          if self.mode
+            color = Color(self.color).rgb()
+            self.gateway.setColor(z.addr, z.zone, color.r, color.g, color.b, true)
+          else
+            self.gateway.setWhite(z.addr, z.zone)
+            
+          self.gateway.setBrightness(z.addr, z.zone, self.brightness)
         
       Promise.resolve()
 
     turnOff: (send) ->
-      if typeof send is "undefined"
+      if send?
         send = true
         
       self = @
       @_updateState power: false
-      for z in @zones
-        do (z) =>
-          unless z.send is false or send is false
-            self.gateway.turnOff(z.addr, z.zone)
+      @zones.forEach (z) ->
+        if z.send and send
+          self.gateway.turnOff(z.addr, z.zone)
       Promise.resolve()
 
     setColor: (newColor, send) ->
-      if typeof send is "undefined"
+      if send?
         send = true
         
       self = @
@@ -175,35 +167,32 @@ module.exports = (env) ->
         mode: @COLOR_MODE
         color: color
       
-      for z in @zones
-        do (z) =>
-          unless z.send is false or send is false
-            self.gateway.setColor(z.addr, z.zone, color.r, color.g, color.b, true) if self.power
+      @zones.forEach (z) ->
+        if z.send and send
+          self.gateway.setColor(z.addr, z.zone, color.r, color.g, color.b, true) if self.power
       Promise.resolve()
 
     setWhite: (send) ->
-      if typeof send is "undefined"
+      if send?
         send = true
         
       self = @
       @_updateState mode: @WHITE_MODE
       
-      for z in @zones
-        do (z) =>
-          unless z.send is false or send is false
-            self.gateway.setWhite(z.addr, z.zone) if self.power
+      @zones.forEach (z) ->
+        if z.send send
+          self.gateway.setWhite(z.addr, z.zone) if self.power
       Promise.resolve()
 
     setBrightness: (newBrightness, send) ->
-      if typeof send is "undefined"
+      if send?
         send = true
         
       self = @
       @_updateState brightness: newBrightness
-      for z in @zones
-        do (z) =>
-          unless z.send is false or send is false
-            self.gateway.setBrightness(z.addr, z.zone, newBrightness) if self.power
+      @zones.forEach (z) ->
+        if z.send is false or  and send
+          self.gateway.setBrightness(z.addr, z.zone, newBrightness) if self.power
 
       Promise.resolve()
 
