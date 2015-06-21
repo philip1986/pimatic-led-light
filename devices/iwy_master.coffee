@@ -11,7 +11,7 @@ module.exports = (env) ->
       @device.on 'error', (err) ->
         env.logger.warn 'light error:', err
 
-      # @_sync() # sync now
+      @_sync() # sync now
 
       super()
 

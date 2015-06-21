@@ -16,7 +16,6 @@ Currently supported:
       "id": "some_id",
       "name": "some_name",
       "class": "IwyMaster | Wifi370",
-      "location": "living room",
       "addr": "xxx.xxx.xxx.xxx"
     }
 ```
@@ -28,7 +27,6 @@ Currently supported:
       "id": "some_id",
       "name": "some_name",
       "class": "Milight",
-      "location": "living room",
       "addr": "xxx.xxx.xxx.xxx",
       "zone": "Zone [0 - 4], 0 = switches all zones"
     }

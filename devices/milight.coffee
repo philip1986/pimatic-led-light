@@ -1,11 +1,10 @@
 module.exports = (env) ->
-
   Promise = env.require 'bluebird'
   _ = require 'lodash'
   Color = require 'color'
-
   nodeMilight = require 'node-milight-promise'
   BaseLedLight = require('./base')(env)
+
 
   class Milight extends BaseLedLight
 
@@ -15,35 +14,30 @@ module.exports = (env) ->
 
       @zone = @config.zone
 
-      if lastState?.power?.value then @turnOn() else @turnOff
-
-      @setBrightness lastState?.brightness?.value or 100
-      @color = lastState?.color?.value or '#FFFFFF'
-
-      if lastState?.mode?.value is @WHITE_MODE
-        @setWhite()
-      else
-        @setColor @color
-
       initState = _.clone lastState
       for key, value of lastState
         initState[key] = value.value
-
       super(initState)
+      if @power then @turnOn() else @turnOff()
 
     _updateState: (attr) ->
       state = _.assign @getState(), attr
-      console.log @getState(), state
       super null, state
 
     turnOn: ->
-      @device.sendCommands(nodeMilight.commands.rgbw['on'](@zone))
       @_updateState power: true
+      @device.sendCommands(nodeMilight.commands.rgbw.on(@zone))
+      if @mode
+        color = Color(@color).rgb()
+        @device.sendCommands(nodeMilight.commands.rgbw.rgb255(color.r, color.g, color.b))
+      else
+        @device.sendCommands(nodeMilight.commands.rgbw.whiteMode(@zone))
+        @device.sendCommands(nodeMilight.commands.rgbw.brightness(@brightness))
       Promise.resolve()
 
     turnOff: ->
-      @device.sendCommands(nodeMilight.commands.rgbw['off'](@zone))
       @_updateState power: false
+      @device.sendCommands(nodeMilight.commands.rgbw.off(@zone))
       Promise.resolve()
 
     setColor: (newColor) ->
@@ -57,8 +51,11 @@ module.exports = (env) ->
 
       @_updateState
         mode: @COLOR_MODE
-        color: Color(newColor).rgb()
-
+        color: color
+      @device.sendCommands(
+        nodeMilight.commands.rgbw.on(@zone),
+        nodeMilight.commands.rgbw.rgb255(color.r, color.g, color.b)
+      ) if @power
       Promise.resolve()
 
     setWhite: () ->
@@ -67,13 +64,16 @@ module.exports = (env) ->
       @_updateState
         mode: @WHITE_MODE
 
-      @setBrightness @brightness
+      @setBrightness @brightnessb
       Promise.resolve()
 
     setBrightness: (newBrightness) ->
-      @device.sendCommands(nodeMilight.commands.rgbw.on(@zone), nodeMilight.commands.rgbw.brightness(newBrightness))
-
       @_updateState brightness: newBrightness
+      @device.sendCommands(
+        nodeMilight.commands.rgbw.on(@zone),
+        nodeMilight.commands.rgbw.brightness(@brightness)
+      ) if @power
+
       Promise.resolve()
 
   return Milight
