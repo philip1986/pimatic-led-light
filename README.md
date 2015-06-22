@@ -6,6 +6,7 @@ Currently supported:
   - [IWY Light Master] (http://iwy-light.de/gb/iwy-starter-sets/iwy-color-single-set-9w.html)
   - [WIFI370] (http://www.wifiledcontroller.com/#!wifi-370-controller/c1s9b)
   - [Milight] (http://www.milight.com)
+  - [Blinkstick] (https://www.blinkstick.com)
 
 ## Configuration
 
@@ -31,6 +32,18 @@ Currently supported:
       "zone": "Zone [0 - 4], 0 = switches all zones"
     }
 ```
+
+### For Blinkstick
+
+```
+    {
+      "id": "some_id",
+      "name": "some_name",
+      "class": "Blinkstick",
+      "serial": "xxx.xxx.xxx.xxx" // Only required if more than one Blinkstick is connected to the host.
+    }
+```
+
 
 ## Features
 
