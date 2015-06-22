@@ -24,13 +24,20 @@ module.exports = (env) ->
       state = _.assign @getState(), attr
       super null, state
 
+    setMaxValue = (color, brightness) ->
+      return (color / 255) * (brightness * 2.5)
+
     turnOn: ->
       @_updateState power: true
       if @mode
         color = Color(@color).rgb()
-        @device.setColor(color.r, color.g, color.b)
       else
-        @device.setColor("#ffffff")
+        color =
+          r: 255
+          g: 255
+          b: 255
+      
+      @device.setColor(setMaxValue(color.r, @brightness), setMaxValue(color.g, @brightness), setMaxValue(color.b, @brightness))
       Promise.resolve()
 
     turnOff: ->
@@ -43,18 +50,24 @@ module.exports = (env) ->
       @_updateState
         mode: @COLOR_MODE
         color: color
-      @device.setColor(color.r, color.g, color.b) if @power
+      @device.setColor(setMaxValue(color.r, @brightness), setMaxValue(color.g, @brightness), setMaxValue(color.b, @brightness)) if @power
       Promise.resolve()
 
     setWhite: () ->
       @_updateState mode: @WHITE_MODE
-      @device.setColor("#ffffff") if @power
+      @device.setColor(setMaxValue(255, @brightness), setMaxValue(255, @brightness), setMaxValue(255, @brightness)) if @power
       Promise.resolve()
 
     setBrightness: (newBrightness) ->
       @_updateState brightness: newBrightness
-      @device.setColor(@brightness) if @power
-
+      if @mode
+        color = Color(@color).rgb()
+      else
+        color =
+          r: 255
+          g: 255
+          b: 255
+      @device.setColor(setMaxValue(color.r, newBrightness), setMaxValue(color.g, newBrightness), setMaxValue(color.b, newBrightness)) if @power
       Promise.resolve()
       
   return Blinkstick
