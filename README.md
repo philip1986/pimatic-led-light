@@ -40,7 +40,7 @@ Currently supported:
       "id": "some_id",
       "name": "some_name",
       "class": "Blinkstick",
-      "serial": "xxx.xxx.xxx.xxx" // Only required if more than one Blinkstick is connected to the host.
+      "serial": "xxx" // Only required if more than one Blinkstick is connected to the host.
     }
 ```
 
