@@ -33,7 +33,7 @@ module.exports = (env) ->
         else
           callback @color
 
-      getColor (color) =>
+      setColor (color) =>
         if simulate
           return Promise.resolve(__("would log set color #{color}"))
         else
