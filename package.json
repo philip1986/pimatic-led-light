@@ -14,7 +14,8 @@
     "color": "^0.8.0",
     "iwy_master": "0.2.2",
     "node-milight-promise": ">=0.0.2",
-    "lodash": "^3.5.0"
+    "lodash": "^3.5.0",
+    "blinkstick": "1.1.1"
   },
   "peerDependencies": {
     "pimatic": "0.8.*"

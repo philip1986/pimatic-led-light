@@ -4,6 +4,7 @@ module.exports = (env) ->
   IwyMaster = require('./devices/iwy_master')(env)
   Milight = require('./devices/milight')(env)
   Wifi370 = require('./devices/wifi370')(env)
+  Blinkstick = require('./devices/blinkstick')(env)
 
   # import preadicares and actions
   ColorActionProvider = require('./predicates_and_actions/color_action')(env)
@@ -24,6 +25,10 @@ module.exports = (env) ->
       @framework.deviceManager.registerDeviceClass 'Milight',
         configDef: deviceConfigDef.Milight
         createCallback: (config, lastState) -> return new Milight(config, lastState)
+
+      @framework.deviceManager.registerDeviceClass 'Blinkstick',
+        configDef: deviceConfigDef.Blinkstick
+        createCallback: (config) -> return new Blinkstick(config)
 
       @framework.ruleManager.addActionProvider(new ColorActionProvider(@framework))
 
