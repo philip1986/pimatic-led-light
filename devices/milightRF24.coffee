@@ -33,39 +33,13 @@ module.exports = (env) ->
       env.logger.debug "Sending Color. Addr: #{id} Zone: #{zone} Red: #{r} Green: #{g} Blue: #{b}"
       @gateway.setColor(id, zone, r,g,b)
       
-      dataObj =
-        raw: "loop",
-        id: id,
-        zone: zone,
-        button: Buttons.ColorFader,
-        longPress: false,
-        discoMode: 0,
-        brightness: 0,
-        color:
-          r: r,
-          g: g,
-          b: b
-
-      @.emit("ReceivedData", dataObj);
+      @_loop(id, zone, Buttons.ColorFader, false, 0, 0, r,g,b)
       
     setBrightness: (id, zone, brightness) ->
       env.logger.debug "Sending Brightness. Addr:#{id} Zone:#{zone} Brightness:#{brightness}"
       @gateway.setBrightness(id, zone, brightness)
       
-      dataObj =
-        raw: "loop",
-        id: id,
-        zone: zone,
-        button: Buttons.BrightnessFader,
-        longPress: false,
-        discoMode: 0,
-        brightness: brightness,
-        color: 
-          r: 0,
-          g: 0,
-          b: 0
-
-      @.emit("ReceivedData", dataObj);
+      @_loop(id, zone, Buttons.BrightnessFader, false, 0, brightness, 0,0,0)
       
     setWhite: (id, zone) ->
       env.logger.debug "Sending Whitemode. Addr:#{id} Zone:#{zone}"
@@ -83,20 +57,7 @@ module.exports = (env) ->
       
       @gateway.sendButton(id, zone, button, true)
       
-      dataObj =
-        raw: "loop",
-        id: id,
-        zone: zone,
-        button: button,
-        longPress: true,
-        discoMode: 0,
-        brightness: 0,
-        color:
-          r: 0,
-          g: 0,
-          b: 0
-
-      @.emit("ReceivedData", dataObj);
+      @_loop(id, zone, button, true, 0, 0, 0,0,0)
       
     turnOn: (id, zone) ->
       env.logger.debug "Sending On. Addr:#{id} Zone:#{zone}"
@@ -114,20 +75,7 @@ module.exports = (env) ->
       
       @gateway.sendButton(id, zone, button, false)
       
-      dataObj =
-        raw: "loop",
-        id: id,
-        zone: zone,
-        button: button,
-        longPress: false,
-        discoMode: 0,
-        brightness: 0,
-        color:
-          r: 0,
-          g: 0,
-          b: 0
-
-      @.emit("ReceivedData", dataObj);
+      @_loop(id, zone, button, false, 0, 0, 0,0,0)
       
     turnOff: (id, zone) ->
       env.logger.debug "Sending Off. Addr:#{id} Zone:#{zone}"
@@ -145,22 +93,24 @@ module.exports = (env) ->
       
       @gateway.sendButton(id, zone, button, false)
       
-      dataObj = {
+      @_loop(id, zone, button, false, 0, 0, 0,0,0)
+  
+    _loop: (id, zone, button, longPress, discoMode, brightness, r, g, b) ->
+      dataObj =
         raw: "loop",
         id: id,
         zone: zone,
         button: button,
-        longPress: false,
-        discoMode: 0,
-        brightness: 0,
-        color: {
-          r: 0,
-          g: 0,
-          b: 0
-        }
-      };
+        longPress: longPress,
+        discoMode: discoMode,
+        brightness: brightness,
+        color:
+          r: r,
+          g: g,
+          b: b
+          
       @.emit("ReceivedData", dataObj);
-  
+    
   MilightRF24::__proto__ = events.EventEmitter.prototype
   
   
