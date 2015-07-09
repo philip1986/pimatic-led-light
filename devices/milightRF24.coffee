@@ -137,13 +137,14 @@ module.exports = (env) ->
             if z.addr is data.id            
               if data.button is Buttons.AllOff or (data.button is Buttons.Group1Off and z.zone is 1)  or (data.button is Buttons.Group2Off and z.zone is 2) or (data.button is Buttons.Group3Off and z.zone is 3)  or (data.button is Buttons.Group4Off and z.zone is 4)
                 self.turnOff(false)
+                
+              if (z.zone is data.zone or data.zone is 0) and data.longPress is true and (Buttons.AllOn or Buttons.Group1On or Buttons.Group2On or Buttons.Group3On or Buttons.Group4On)
+                self.setWhite(false)
                     
               if z.zone is data.zone or data.zone is 0
                 switch data.button 
                   when Buttons.AllOn, Buttons.Group1On, Buttons.Group2On, Buttons.Group3On, Buttons.Group4On
                     self.turnOn(false)
-                  when (Buttons.AllOn or Buttons.Group1On or Buttons.Group2On or Buttons.Group3On or Buttons.Group4On) and data.longPress is true
-                    self.setWhite(false)
                   when Buttons.AllOff
                     self.turnOff(false)
                   when Buttons.ColorFader or Buttons.FaderReleased
