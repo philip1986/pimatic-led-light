@@ -63,5 +63,10 @@ module.exports = {
         description: "serial of Blinkstick"
         type: "string"
         default: ""
+  },
+  DummyLedLight: {
+    title: "DummyLedLight"
+    type: "object"
+    properties: {}
   }
 }
