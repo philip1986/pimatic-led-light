@@ -2,5 +2,9 @@
 module.exports = {
   title: "Plugin config options"
   type: "object"
-  properties:{}
+  properties:
+    MilightRF24Port:
+      description: "Port of arduino with openmili sketch"
+      type: "string"
+      default: ""
 }
