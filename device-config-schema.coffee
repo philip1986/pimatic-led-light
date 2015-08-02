@@ -54,5 +54,14 @@ module.exports = {
       addr:
         description: "IP-Address of light device"
         type: "string"
+  },
+  Blinkstick: {
+    title: "BlinkStick"
+    type: "object"
+    properties:
+      serial:
+        description: "serial of Blinkstick"
+        type: "string"
+        default: ""
   }
 }
