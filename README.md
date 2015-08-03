@@ -6,6 +6,7 @@ Currently supported:
   - [IWY Light Master] (http://iwy-light.de/gb/iwy-starter-sets/iwy-color-single-set-9w.html)
   - [WIFI370] (http://www.wifiledcontroller.com/#!wifi-370-controller/c1s9b)
   - [Milight] (http://www.milight.com)
+  - [Blinkstick] (https://www.blinkstick.com)
 
 ## Configuration
 
@@ -63,6 +64,17 @@ You will get your addr when you just add the parameter MilightRF24Port to your c
 
 You need for example an arduino nano and connect it to an nrf24 using the standard SPI wiring.
 Get the sketch from here https://github.com/henryk/openmili and change the CE and CSN pin to your wiring.
+
+### For Blinkstick
+
+```
+    {
+      "id": "some_id",
+      "name": "some_name",
+      "class": "Blinkstick",
+      "serial": "xxx" // Only required if more than one Blinkstick is connected to the host.
+    }
+```
 
 
 ## Features
