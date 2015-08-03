@@ -41,7 +41,14 @@ module.exports = (env) ->
       Promise.resolve()
 
     setColor: (newColor) ->
-      color = Color(newColor).rgb()
+      r = Number("0x#{newColor[1..2]}")
+      g = Number("0x#{newColor[3..4]}")
+      b = Number("0x#{newColor[5..6]}")
+      if r == 255 && g == 255 && b == 255
+        return @setWhite()
+
+      @device.sendCommands(nodeMilight.commands.rgbw.on(@zone), nodeMilight.commands.rgbw.rgb255(r, g, b))
+
       @_updateState
         mode: @COLOR_MODE
         color: color
@@ -52,8 +59,12 @@ module.exports = (env) ->
       Promise.resolve()
 
     setWhite: () ->
-      @_updateState mode: @WHITE_MODE
-      @device.sendCommands(nodeMilight.commands.rgbw.whiteMode(@zone)) if @power
+      @device.sendCommands(nodeMilight.commands.rgbw.whiteMode(@zone))
+
+      @_updateState
+        mode: @WHITE_MODE
+
+      @setBrightness @brightnessb
       Promise.resolve()
 
     setBrightness: (newBrightness) ->
