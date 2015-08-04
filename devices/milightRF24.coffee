@@ -8,7 +8,8 @@ module.exports = (env) ->
   BaseLedLight = require('./base')(env)
   events = require('events')
   
-  class MilightRF24
+  # Handles the connection to the arduino (receives and sends messages)
+  class MilightRF24 extends events.EventEmitter
     constructor: (@config) ->
       self = @
       @gateway = new nodeMilightRF24({port: @config.MilightRF24Port})
@@ -95,6 +96,7 @@ module.exports = (env) ->
       
       @_loop(id, zone, button, false, 0, 0, 0,0,0)
   
+    # loop for changes to zone 0 to be reflected by all other zones which have the same id
     _loop: (id, zone, button, longPress, discoMode, brightness, r, g, b) ->
       dataObj =
         raw: "loop",
@@ -110,10 +112,9 @@ module.exports = (env) ->
           b: b
           
       @.emit("ReceivedData", dataObj);
-    
-  MilightRF24::__proto__ = events.EventEmitter.prototype
   
-  
+  # registers for messages from the main class and checks if incoming messages are addressed at the registered ids and zone combination
+  # sends changes from the gui to the main class, so that they are send to the arduino
   class MilightRF24Zone extends BaseLedLight
 
     constructor: (@config, lastState, MilightRF24Gateway) ->
@@ -130,10 +131,12 @@ module.exports = (env) ->
       super(initState)
       if @power then @turnOn() else @turnOff()
       
+      # register for incoming messages
       @gateway.on('ReceivedData', (data) ->
         self.zones.forEach (z) ->
           
-          unless z.receive is false          
+          # check if this zone listens on the current zone from config
+          unless z.receive is false
             if z.addr is data.id            
               if data.button is Buttons.AllOff or (data.button is Buttons.Group1Off and z.zone is 1)  or (data.button is Buttons.Group2Off and z.zone is 2) or (data.button is Buttons.Group3Off and z.zone is 3)  or (data.button is Buttons.Group4Off and z.zone is 4)
                 self.turnOff(false)
