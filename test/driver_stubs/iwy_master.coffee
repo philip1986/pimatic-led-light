@@ -26,9 +26,6 @@ class DriverStub
     @setWhite.reset()
     @setBrightness.reset()
 
-
-    # on: sinon.stub()
-
 ### default behavior ###
 DriverStub.getStateStub.yields null, DriverStub.defaultDeviceState
 

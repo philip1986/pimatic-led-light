@@ -17,6 +17,3 @@ exports.env =
     info: sinon.stub()
     warn: sinon.stub()
     error: sinon.stub()
-
-
-

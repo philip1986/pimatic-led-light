@@ -8,4 +8,3 @@ class DriverStub
     @sendCommands.reset()
 
 exports.DriverStub = DriverStub
-

@@ -122,6 +122,3 @@ describe 'Milight', ->
         nodeMilight.commands.rgbw.on(config.zone)
         nodeMilight.commands.rgbw.brightness(50)
       ]
-
-
-

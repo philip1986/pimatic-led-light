@@ -75,14 +75,3 @@ describe 'IWY Master', ->
     it 'should call the corresponding driver method', ->
       device.changeDimlevelTo(50)
       DriverStub.setBrightness.calledOnce.should.equal true
-
-
-
-
-
-
-
-
-
-
-
