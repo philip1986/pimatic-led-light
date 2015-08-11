@@ -23,5 +23,19 @@
   "engines": {
     "node": ">0.8.x",
     "npm": ">1.1.x"
+  },
+  "contributors": [
+    {
+      "name": "Markus Minini",
+      "url": "https://github.com/xento"
+    }
+  ],
+  "devDependencies": {
+    "bluebird": "^2.9.9",
+    "coffee-script": "^1.9.3",
+    "decl-api": "0.0.17",
+    "mocha": "^2.2.5",
+    "should": "^7.0.2",
+    "sinon": "^1.15.4"
   }
 }
