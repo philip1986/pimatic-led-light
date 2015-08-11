@@ -59,6 +59,11 @@ module.exports = (env) ->
         params:
           brightnessValue:
             type: t.number
+      changeDimlevelTo:
+        description: "Sets the level of the dimmer"
+        params:
+          dimlevel:
+            type: t.number
 
     constructor: (initState) ->
       unless @device
@@ -118,7 +123,8 @@ module.exports = (env) ->
     turnOff: -> throw new Error "Function 'turnOff' is not implemented!"
     setColor: -> throw new Error "Function 'setColor' is not implemented!"
     setWhite: -> throw new Error "Function 'setWhite' is not implemented!"
-    setBrightness: -> throw new Error "Function 'setBrightness' is not implemented!"
+    setBrightness: (brightnessValue) -> throw new Error "Function 'setBrightness' is not implemented!"
+    changeDimlevelTo: (dimLevel) -> @setBrightness(dimLevel)  
 
     toggle: ->
       if @power is 'on' then @turnOn() else @turnOff()
