@@ -3,7 +3,6 @@ module.exports = (env) ->
   Promise = env.require 'bluebird'
 
   IwyMasterDriver = require 'iwy_master'
-
   BaseLedLight = require('./base')(env)
 
   class IwyMaster extends BaseLedLight
@@ -30,7 +29,6 @@ module.exports = (env) ->
       Promise.resolve()
 
     setColor: (newColor) ->
-      return Promise.resolve() unless /#[0-9a-fA-f]{6}/.test newColor
       return Promise.resolve() if @color is newColor
 
       red  = Number("0x#{newColor[1..2]}")
@@ -45,8 +43,6 @@ module.exports = (env) ->
       Promise.resolve()
 
     setBrightness: (newBrightness) ->
-      return Promise.resolve() unless newBrightness >= 0 and newBrightness <= 100
       return Promise.resolve() if @brightness is newBrightness
       @device.setBrightness newBrightness, @_updateState.bind(@)
       Promise.resolve()
-
