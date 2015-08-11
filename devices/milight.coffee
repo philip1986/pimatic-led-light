@@ -46,7 +46,7 @@ module.exports = (env) ->
         return @setWhite()
 
       @_updateState
-        mode: color
+        mode: @COLOR_MODE
         color: color
 
       @device.sendCommands(
