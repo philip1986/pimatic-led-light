@@ -11,6 +11,8 @@ module.exports = (env) ->
     constructor: (@config, lastState) ->
       @device = new nodeMilight.MilightController
         ip: @config.addr
+        delayBetweenCommands: 75
+        commandRepeat: 3
 
       @zone = @config.zone
 
