@@ -8,9 +8,15 @@ Currently supported:
   - [Milight] (http://www.milight.com)
   - [Blinkstick] (https://www.blinkstick.com)
 
+## Installation
+
+To install the plugin on a Debian or Raspbian system libudev-dev must be installed. 
+
+    sudo apt-get install libudev-dev
+
 ## Configuration
 
-### For IwyMasten and Wifi370
+### For IwyMaster and Wifi370
 
 ```
     {

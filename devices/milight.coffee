@@ -11,6 +11,8 @@ module.exports = (env) ->
     constructor: (@config, lastState) ->
       @device = new nodeMilight.MilightController
         ip: @config.addr
+        delayBetweenCommands: 75
+        commandRepeat: 3
 
       @zone = @config.zone
 
@@ -41,17 +43,14 @@ module.exports = (env) ->
       Promise.resolve()
 
     setColor: (newColor) ->
-      r = Number("0x#{newColor[1..2]}")
-      g = Number("0x#{newColor[3..4]}")
-      b = Number("0x#{newColor[5..6]}")
-      if r == 255 && g == 255 && b == 255
+      color = Color(newColor).rgb()
+      if color.r == 255 && color.g == 255 && color.b == 255
         return @setWhite()
-
-      @device.sendCommands(nodeMilight.commands.rgbw.on(@zone), nodeMilight.commands.rgbw.rgb255(r, g, b))
 
       @_updateState
         mode: @COLOR_MODE
         color: color
+
       @device.sendCommands(
         nodeMilight.commands.rgbw.on(@zone),
         nodeMilight.commands.rgbw.rgb255(color.r, color.g, color.b)

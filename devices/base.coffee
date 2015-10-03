@@ -72,7 +72,7 @@ module.exports = (env) ->
       @name = @config.name
       @id = @config.id
 
-      @power = initState?.power or false
+      @power = initState?.power or 'off'
       @color = initState?.color or ''
       @brightness = initState?.brightness or 100
       @mode = initState?.mode or false
@@ -124,10 +124,10 @@ module.exports = (env) ->
     setColor: -> throw new Error "Function 'setColor' is not implemented!"
     setWhite: -> throw new Error "Function 'setWhite' is not implemented!"
     setBrightness: (brightnessValue) -> throw new Error "Function 'setBrightness' is not implemented!"
-    changeDimlevelTo: (dimLevel) -> @setBrightness(dimLevel)  
+    changeDimlevelTo: (dimLevel) -> @setBrightness(dimLevel)
 
     toggle: ->
-      if @power is 'on' then @turnOn() else @turnOff()
+      if @power is 'off' then @turnOn() else @turnOff()
       Promise.resolve()
 
   return BaseLedLight
