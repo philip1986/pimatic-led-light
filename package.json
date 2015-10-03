@@ -9,6 +9,9 @@
     "url": "git://github.com/philip1986/pimatic-led-light.git"
   },
   "configSchema": "led-light-schema.coffee",
+  "scripts": {
+      "test": "node_modules/.bin/mocha test"
+    },
   "dependencies": {
     "cassert": "^0.1.2",
     "color": "^0.8.0",
