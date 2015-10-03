@@ -1,6 +1,7 @@
 language: node_js
 
 before_install:
+  - export NODE_ENV=travis-test
   - sudo apt-get update
   - sudo apt-get install libusb-1.0-0-dev
   - sudo apt-get install libudev-dev
