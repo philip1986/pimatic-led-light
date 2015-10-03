@@ -18,8 +18,7 @@ describe 'IWY Master', ->
   afterEach ->
     DriverStub.reset()
 
-  # TODO: fix default power in base class
-  describe.skip '#getPower', ->
+  describe '#getPower', ->
     it 'should return the current power state (false by default)', (done) ->
       device.getPower().then (power) ->
         power.should.equal 'off'
@@ -42,8 +41,7 @@ describe 'IWY Master', ->
       device.turnOff()
       DriverStub.switchOff.calledOnce.should.equal true
 
-  # TODO: fix toggle methode in base class
-  describe.skip '#toggle', ->
+  describe '#toggle', ->
     it 'should switch the power state to ON when it is OFF before', ->
       device.power = 'off'
       device.toggle()

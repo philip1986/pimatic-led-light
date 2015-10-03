@@ -55,8 +55,7 @@ describe 'Milight', ->
       DriverStub.sendCommands.calledOnce.should.equal true
       DriverStub.sendCommands.firstCall.args[0].should.eql nodeMilight.commands.rgbw.off(config.zone)
 
-  # TODO: fix toggle methode in base class
-  describe.skip '#toggle', ->
+  describe '#toggle', ->
     it 'should switch the power state to ON when it is OFF before', ->
       device.power = 'off'
       device.toggle()
@@ -83,8 +82,7 @@ describe 'Milight', ->
       DriverStub.sendCommands.secondCall.args[0].should.eql nodeMilight.commands.rgbw.on(config.zone)
       DriverStub.sendCommands.secondCall.args[1].should.eql nodeMilight.commands.rgbw.brightness(device.brightness)
 
-  # TODO: merge PR #25 from mwittig to fix broken code
-  describe.skip '#setColor', ->
+  describe '#setColor', ->
     it 'should call the corresponding driver method', ->
       device.setColor('#AAAAAA')
       device.power = 'on'
@@ -100,8 +98,11 @@ describe 'Milight', ->
         device.setColor('#AAAAAA')
         device.power = 'off'
 
-        DriverStub.sendCommands.called.should.equal false
-
+        DriverStub.sendCommands.calledOnce.should.equal true
+        DriverStub.sendCommands.firstCall.args.should.eql [
+          nodeMilight.commands.rgbw.on(config.zone)
+          nodeMilight.commands.rgbw.rgb255(Number('0xAA'), Number('0xAA'), Number('0xAA'))
+        ]
 
   describe '#setBrightness', ->
     it 'should call the corresponding driver method', ->
