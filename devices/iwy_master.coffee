@@ -46,4 +46,3 @@ module.exports = (env) ->
       return Promise.resolve() if @brightness is newBrightness
       @device.setBrightness newBrightness, @_updateState.bind(@)
       Promise.resolve()
-

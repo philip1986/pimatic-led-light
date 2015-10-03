@@ -10,7 +10,7 @@ Currently supported:
 
 ## Configuration
 
-### For IwyMasten and Wifi370
+### For IwyMaster and Wifi370
 
 ```
     {
