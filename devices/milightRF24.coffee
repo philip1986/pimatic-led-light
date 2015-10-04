@@ -12,8 +12,9 @@ module.exports = (env) ->
   class MilightRF24 extends events.EventEmitter
     # singelton gatway connetion
     @connectToGateway: (config) ->
-      return @ if @gateway
-      return new MilightRF24 config
+      unless MilightRF24.instance
+        MilightRF24.instance = new MilightRF24 config
+      return MilightRF24.instance
 
     constructor: (@config) ->
       self = @
