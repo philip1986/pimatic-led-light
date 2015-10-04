@@ -16,9 +16,6 @@ module.exports = (env) ->
 
     init: (app, @framework, @config) =>
       deviceConfigDef = require('./device-config-schema.coffee')
-      
-      if @config.MilightRF24Port != ""
-        MilightRF24 = new MilightRF24(@config)
 
       @framework.deviceManager.registerDeviceClass 'IwyMaster',
         configDef: deviceConfigDef.LedLight
@@ -32,10 +29,10 @@ module.exports = (env) ->
         configDef: deviceConfigDef.Milight
         createCallback: (config, lastState) -> return new Milight(config, lastState)
 
-      if @config.MilightRF24Port != ""
-        @framework.deviceManager.registerDeviceClass 'MilightRF24',
-          configDef: deviceConfigDef.MilightRF24
-          createCallback: (config, lastState) -> return MilightRF24.getDevice(config, lastState)
+      @framework.deviceManager.registerDeviceClass 'MilightRF24',
+        configDef: deviceConfigDef.MilightRF24
+        createCallback: (config, lastState) ->
+          return MilightRF24.connectToGateway(config).getDevice(config, lastState)
 
       unless process.env.NODE_ENV is 'travis-test'
         @framework.deviceManager.registerDeviceClass 'Blinkstick',
