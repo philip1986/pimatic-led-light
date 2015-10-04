@@ -25,6 +25,5 @@ exports.loadPluginWithEnvAndConfig = (env, deviceClass, deviceConfig) ->
 
   plugin.init null, framework,
     plugin: 'led-light'
-    MilightRF24Port: '' # fix MilightRF24 integration in pimatic-led-light.coffee
 
   return framework.device

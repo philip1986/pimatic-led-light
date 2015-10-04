@@ -14,6 +14,7 @@ exports.env =
   plugins:
     Plugin: class Plugin
   logger:
+    debug: sinon.stub()
     info: sinon.stub()
     warn: sinon.stub()
     error: sinon.stub()
