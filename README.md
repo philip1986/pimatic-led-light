@@ -10,7 +10,7 @@ Currently supported:
 
 ## Installation
 
-To install the plugin on a Debian or Raspbian system libudev-dev must be installed. 
+To install the plugin on a Debian or Raspbian system libudev-dev must be installed.
 
     sudo apt-get install libudev-dev
 
@@ -41,30 +41,27 @@ To install the plugin on a Debian or Raspbian system libudev-dev must be install
 
 ### For MilightRF24
 
-Pluginconfig:
 ```
     {
-      "plugin": "led-light",
-      "MilightRF24Port": "/dev/ttyUSB1"
-    }
-```
-
-Devices:
-```
-    "zones": [
-        {
-          "addr": "5927",
-          "zone": 0,
-          "send": true,
-          "receive": true
-        },
-        {
-          "addr": "485D",
-          "zone": 0,
-          "send": true,
-          "receive": true
-        }
-      ]
+      "id": 'some_id'
+      "name": 'some_name'
+      "class": 'MilightRF24'
+      "port": '/dev/ttyUSB1'
+      "zones": [
+          {
+            "addr": "5927",
+            "zone": 0,
+            "send": true,
+            "receive": true
+          },
+          {
+            "addr": "485D",
+            "zone": 0,
+            "send": true,
+            "receive": true
+          }
+        ]
+      }
 ```
 You will get your addr when you just add the parameter MilightRF24Port to your config and switch to the debug output in pimatic and change some settings with your remote.
 
