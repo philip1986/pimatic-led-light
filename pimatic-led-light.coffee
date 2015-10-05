@@ -55,6 +55,7 @@ module.exports = (env) ->
           mobileFrontend.registerAssetFile 'html', 'pimatic-led-light/ui/led-light.html'
           mobileFrontend.registerAssetFile 'js', 'pimatic-led-light/ui/vendor/spectrum.js'
           mobileFrontend.registerAssetFile 'css', 'pimatic-led-light/ui/vendor/spectrum.css'
+          mobileFrontend.registerAssetFile 'js', 'pimatic-led-light/ui/vendor/async.js'
         else
           env.logger.warn 'your plugin could not find the mobile-frontend. No gui will be available'
 
