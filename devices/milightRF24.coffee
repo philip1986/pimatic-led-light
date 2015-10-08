@@ -4,16 +4,24 @@ module.exports = (env) ->
   Color = require 'color'
   nodeMilightRF24 = require 'node-milight-rf24'
   Buttons = nodeMilightRF24.RGBWButtons
-  nodeMilightRF24 =  nodeMilightRF24.MilightRF24Controller
+  NodeMilightRF24 =  nodeMilightRF24.MilightRF24Controller
   BaseLedLight = require('./base')(env)
   events = require('events')
   
   # Handles the connection to the arduino (receives and sends messages)
   class MilightRF24 extends events.EventEmitter
+    # singelton gatway connetion
+    @connectToGateway: (config) ->
+      unless MilightRF24.instance
+        MilightRF24.instance = new MilightRF24 config
+      return MilightRF24.instance
+
     constructor: (@config) ->
       self = @
-      @gateway = new nodeMilightRF24({port: @config.MilightRF24Port})
-      env.logger.debug "Opening "+@config.MilightRF24Port
+      @gateway = new NodeMilightRF24
+        port: @config.port
+
+      env.logger.debug "Opening #{@config.port}"
       @gateway.open()
       
       events.EventEmitter.call(this);

@@ -5,7 +5,9 @@ module.exports = (env) ->
   Milight = require('./devices/milight')(env)
   MilightRF24 = require('./devices/milightRF24')(env)
   Wifi370 = require('./devices/wifi370')(env)
-  Blinkstick = require('./devices/blinkstick')(env)
+  unless process.env.NODE_ENV is 'travis-test'
+    Blinkstick = require('./devices/blinkstick')(env)
+  DummyLedLight = require('./devices/dummy')(env)
 
   # import preadicares and actions
   ColorActionProvider = require('./predicates_and_actions/color_action')(env)
@@ -15,9 +17,6 @@ module.exports = (env) ->
 
     init: (app, @framework, @config) =>
       deviceConfigDef = require('./device-config-schema.coffee')
-      
-      if @config.MilightRF24Port != ""
-        MilightRF24 = new MilightRF24(@config)
 
       @framework.deviceManager.registerDeviceClass 'IwyMaster',
         configDef: deviceConfigDef.LedLight
@@ -30,15 +29,20 @@ module.exports = (env) ->
       @framework.deviceManager.registerDeviceClass 'Milight',
         configDef: deviceConfigDef.Milight
         createCallback: (config, lastState) -> return new Milight(config, lastState)
-        
-      if @config.MilightRF24Port != ""
-        @framework.deviceManager.registerDeviceClass 'MilightRF24',
-          configDef: deviceConfigDef.MilightRF24
-          createCallback: (config, lastState) -> return MilightRF24.getDevice(config, lastState)
 
-      @framework.deviceManager.registerDeviceClass 'Blinkstick',
-        configDef: deviceConfigDef.Blinkstick
-        createCallback: (config) -> return new Blinkstick(config)
+      @framework.deviceManager.registerDeviceClass 'MilightRF24',
+        configDef: deviceConfigDef.MilightRF24
+        createCallback: (config, lastState) ->
+          return MilightRF24.connectToGateway(config).getDevice(config, lastState)
+
+      unless process.env.NODE_ENV is 'travis-test'
+        @framework.deviceManager.registerDeviceClass 'Blinkstick',
+          configDef: deviceConfigDef.Blinkstick
+          createCallback: (config) -> return new Blinkstick(config)
+
+      @framework.deviceManager.registerDeviceClass 'DummyLedLight',
+        configDef: deviceConfigDef.DummyLedLight
+        createCallback: (config) -> return new DummyLedLight(config)
 
       @framework.ruleManager.addActionProvider(new ColorActionProvider(@framework))
       @framework.ruleManager.addActionProvider(new ModeActionProvider(@framework))

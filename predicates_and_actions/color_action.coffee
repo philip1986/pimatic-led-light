@@ -29,16 +29,18 @@ module.exports = (env) ->
               hexColor += temperatureColor.rgb().g.toString(16)
               hexColor += temperatureColor.rgb().b.toString(16)
 
-              callback hexColor
+              callback hexColor, simulate
         else
-          callback @color
+          callback @color, simulate
 
-      setColor (color) =>
-        if simulate
-          return Promise.resolve(__("would log set color #{color}"))
-        else
-          @device.setColor color
-          return Promise.resolve(__("set color #{color}"))
+      getColor @setColor
+
+    setColor: (color, simulate) =>
+      if simulate
+        return Promise.resolve(__("would log set color #{color}"))
+      else
+        @device.setColor color
+        return Promise.resolve(__("set color #{color}"))
 
   class ColorActionProvider extends env.actions.ActionProvider
       constructor: (@framework) ->

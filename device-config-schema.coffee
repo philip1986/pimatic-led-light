@@ -35,6 +35,9 @@ module.exports = {
             addr:
               description: "Address of light device"
               type: "string"
+            port:
+              description: "USB port where the gateway is attached"
+              type: "string"
             zone:
               description: "Zone [0 - 4], 0 = switches all zones"
               type: "number"
@@ -63,5 +66,10 @@ module.exports = {
         description: "serial of Blinkstick"
         type: "string"
         default: ""
+  },
+  DummyLedLight: {
+    title: "DummyLedLight"
+    type: "object"
+    properties: {}
   }
 }
