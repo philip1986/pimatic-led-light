@@ -59,6 +59,24 @@ module.exports = (env) ->
       @gateway.sendButton(id, zone, button, true)
       
       @_loop(id, zone, button, true, 0, 0, 0,0,0)
+     
+    setNight: (id, zone) ->
+      env.logger.debug "Sending Nightmode. Addr:#{id} Zone:#{zone}"
+      switch zone
+        when 0
+          button = Buttons.AllOff
+        when 1
+          button = Buttons.Group1Off
+        when 2
+          button = Buttons.Group2Off
+        when 3
+          button = Buttons.Group3Off
+        when 4
+          button = Buttons.Group4Off
+      
+      @gateway.sendButton(id, zone, button, true)
+      
+      @_loop(id, zone, button, true, 0, 0, 0,0,0)
       
     turnOn: (id, zone) ->
       env.logger.debug "Sending On. Addr:#{id} Zone:#{zone}"
@@ -216,6 +234,24 @@ module.exports = (env) ->
           self.gateway.setWhite(z.addr, z.zone) if self.power
       Promise.resolve()
 
+    setNight: (send) ->
+      self = @
+    
+      @_updateState mode: @NIGHT_MODE
+      
+      @zones.forEach (z) ->
+        unless z.send is false or send is false
+          self.gateway.setNight(z.addr, z.zone)
+      Promise.resolve()
+    
+    setMode: (mode) ->
+      if mode is @NIGHT_MODE then
+        setNight(true)
+      else if mode is @WHITE_MODE then
+        setWhite(true)
+      else if mode is @COLOR_MODE then
+        setColor(@color, true)
+    
     setBrightness: (newBrightness, send) ->
       self = @
       @_updateState brightness: newBrightness

@@ -9,6 +9,7 @@ module.exports = (env) ->
 
   # import preadicares and actions
   ColorActionProvider = require('./predicates_and_actions/color_action')(env)
+  ModeActionProvider = require('./predicates_and_actions/mode_action')(env)
 
   class LedLightPlugin extends env.plugins.Plugin
 
@@ -40,6 +41,7 @@ module.exports = (env) ->
         createCallback: (config) -> return new Blinkstick(config)
 
       @framework.ruleManager.addActionProvider(new ColorActionProvider(@framework))
+      @framework.ruleManager.addActionProvider(new ModeActionProvider(@framework))
 
       # wait till all plugins are loaded
       @framework.on "after init", =>
