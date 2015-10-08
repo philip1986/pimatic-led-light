@@ -253,12 +253,12 @@ module.exports = (env) ->
       Promise.resolve()
     
     setMode: (mode) ->
-      if mode is @NIGHT_MODE then
-        setNight(true)
-      else if mode is @WHITE_MODE then
-        setWhite(true)
-      else if mode is @COLOR_MODE then
-        setColor(@color, true)
+      if mode is @NIGHT_MODE
+        @setNight(true)
+      else if mode is @WHITE_MODE
+        @setWhite(true)
+      else if mode is @COLOR_MODE
+        @setColor(@color, true)
     
     setBrightness: (newBrightness, send) ->
       self = @

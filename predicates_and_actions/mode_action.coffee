@@ -13,7 +13,9 @@ module.exports = (env) ->
       getMode = (callback) =>
           callback @mode
 
-      setMode (mode) =>
+      getMode @setMode
+      
+    setMode: (mode, simulate) =>
         if simulate
           return Promise.resolve(__("would log set mode #{mode}"))
         else
@@ -31,8 +33,8 @@ module.exports = (env) ->
         hadPrefix = false
 
         # Try to match the input string with: set ->
-        m = M(input, context).match(['set '])
-
+        m = M(input, context).match(['set mode of '])
+        
         device = null
         mode = null
         match = null
@@ -51,20 +53,20 @@ module.exports = (env) ->
             m.or [
               (m) ->
                 # TODO: forward pattern to UI
-                m.match [/white/], (m, s) ->
-                  mode = @WHITE_MODE
+                m.match ['white'], (m) ->
+                  mode = 'WHITE'
                   match = m.getFullMatch()
 
               (m) ->
                 # TODO: forward pattern to UI
-                m.match [/night/], (m, s) ->
-                  mode = @NIGHT_MODE
+                m.match ['night'], (m) ->
+                  mode = 'NIGHT'
                   match = m.getFullMatch()
 
               (m) ->
                 # TODO: forward pattern to UI
-                m.match [/color/], (m, s) ->
-                  mode = @COLOR_MODE
+                m.match ['color'], (m) ->
+                  mode = 'COLOR'
                   match = m.getFullMatch()
             ]
 
