@@ -150,6 +150,7 @@ module.exports = (env) ->
       @zones = @config.zones
       @brightness = 100
       @color = "FFFF00"
+      @onMode = @COLOR_MODE
       
       initState = _.clone lastState
       for key, value of lastState
@@ -163,18 +164,16 @@ module.exports = (env) ->
           
           # check if this zone listens on the current zone from config
           unless z.receive is false
-            if z.addr is data.id            
-              if data.button is Buttons.AllOff or (data.button is Buttons.Group1Off and z.zone is 1)  or (data.button is Buttons.Group2Off and z.zone is 2) or (data.button is Buttons.Group3Off and z.zone is 3)  or (data.button is Buttons.Group4Off and z.zone is 4)
-                self.turnOff(false)
-                
-              if (z.zone is data.zone or data.zone is 0) and data.longPress is true and (Buttons.AllOn or Buttons.Group1On or Buttons.Group2On or Buttons.Group3On or Buttons.Group4On)
-                self.setWhite(false)
-                    
+            if z.addr is data.id                          
               if z.zone is data.zone or data.zone is 0
                 switch data.button 
+                  when data.longPress is true and (Buttons.AllOn or Buttons.Group1On or Buttons.Group2On or Buttons.Group3On or Buttons.Group4On)
+                    self.setWhite(false)
+                  when data.longPress is true and (Buttons.AllOff or Buttons.Group1Off or Buttons.Group2Off or Buttons.Group3Off or Buttons.Group4Off)
+                    self.setNight(false)
                   when Buttons.AllOn, Buttons.Group1On, Buttons.Group2On, Buttons.Group3On, Buttons.Group4On
                     self.turnOn(false)
-                  when Buttons.AllOff
+                  when Buttons.AllOff or (Buttons.Group1Off and z.zone is 1)  or (Buttons.Group2Off and z.zone is 2) or (Buttons.Group3Off and z.zone is 3)  or (Buttons.Group4Off and z.zone is 4)
                     self.turnOff(false)
                   when Buttons.ColorFader or Buttons.FaderReleased
                     self.setColor("#"+self._num2Hex(data.color.r)+self._num2Hex(data.color.g)+self._num2Hex(data.color.b), false)
@@ -195,7 +194,9 @@ module.exports = (env) ->
     turnOn: (send) ->
       self = @
       
-      @_updateState power: true
+      @_updateState 
+        mode: @onMode
+        power: true
       
       @zones.forEach (z) ->
         unless z.send is false or send is false
@@ -214,6 +215,7 @@ module.exports = (env) ->
 
     turnOff: (send) ->
       self = @
+      
       @_updateState power: false
       @zones.forEach (z) ->
         unless z.send is false or send is false
@@ -221,12 +223,15 @@ module.exports = (env) ->
       Promise.resolve()
 
     setColor: (newColor, send) ->
-
       self = @
       color = Color(newColor).rgb()
-      @_updateState
-        mode: @COLOR_MODE
-        color: color
+      
+      if @power
+        @_updateState
+          mode: @COLOR_MODE
+          color: color
+          
+        @onMode = @COLOR_MODE
       
       @zones.forEach (z) ->
         unless z.send is false or send is false
@@ -237,6 +242,8 @@ module.exports = (env) ->
       self = @
       @_updateState mode: @WHITE_MODE
       
+      @onMode = @WHITE_MODE
+      
       @zones.forEach (z) ->
         unless z.send is false or send is false
           self.gateway.setWhite(z.addr, z.zone) if self.power
@@ -244,7 +251,6 @@ module.exports = (env) ->
 
     setNight: (send) ->
       self = @
-    
       @_updateState mode: @NIGHT_MODE
       
       @zones.forEach (z) ->
@@ -262,7 +268,8 @@ module.exports = (env) ->
     
     setBrightness: (newBrightness, send) ->
       self = @
-      @_updateState brightness: newBrightness
+      if @power then @_updateState brightness: newBrightness
+      
       @zones.forEach (z) ->
         unless z.send is false or send is false
           self.gateway.setBrightness(z.addr, z.zone, newBrightness) if self.power
