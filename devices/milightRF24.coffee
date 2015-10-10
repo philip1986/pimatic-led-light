@@ -216,7 +216,10 @@ module.exports = (env) ->
     turnOff: (send) ->
       self = @
       
-      @_updateState power: false
+      @_updateState 
+        mode: @onMode
+        power: false
+        
       @zones.forEach (z) ->
         unless z.send is false or send is false
           self.gateway.turnOff(z.addr, z.zone)
