@@ -71,5 +71,18 @@ module.exports = {
     title: "DummyLedLight"
     type: "object"
     properties: {}
+  },
+  Hyperion: {
+    title: "Hyperion",
+    type: "object"
+    properties:
+      addr:
+        description: "IP-Address of hyperion device"
+        type: "string"
+        default: "localhost"
+      port:
+        description: "Port of hyperion device"
+        type: "string",
+        default: "19444"
   }
 }
