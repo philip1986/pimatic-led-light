@@ -3,20 +3,24 @@ module.exports = (env) ->
   _ = require 'lodash'
   Color = require 'color'
   net = require 'net'
+  eventToPromise = require 'event-to-promise'
   BaseLedLight = require('./base')(env)
-
+  Hyperion = require 'hyperion-client'
   ###
   ## implementation based on https://github.com/danimal4326/homebridge-hyperion
   ###
-  class Hyperion extends BaseLedLight
+  class HyperionLedLight extends BaseLedLight
 
-    constructor: (@config) ->
-      @host = @config.host
-      @port = @config.port
-      @color = Color().hsv([0, 0, 0])
-      @prevColor = Color().hsv([0, 0, 100])
+    _connected: false
 
-      super()
+    constructor: (@config, lastState) ->
+      @device = @
+      @_dimlevel = lastState?.dimlevel?.value or 0
+
+      initState = _.clone lastState
+      for key, value of lastState
+        initState[key] = value.value
+      super(initState)
 
       if @power then @turnOn() else @turnOff()
 
@@ -26,17 +30,12 @@ module.exports = (env) ->
 
     turnOn: ->
       @_updateState power: true
-      if @mode
-        color = Color(@color).rgb()
-      else
-        color = Color("#FFFFFF")
-      @sendColor(color)
+      env.logger.debug("turnOn not implemented yet")
       Promise.resolve()
 
     turnOff: ->
       @_updateState power: false
-      @setColor("#000000")
-      @sendBlacklevel([0, 0, 0])
+      env.logger.debug("turnOff not implemented yet")
       Promise.resolve()
 
     setColor: (newColor) ->
@@ -44,55 +43,43 @@ module.exports = (env) ->
       @_updateState
         mode: @COLOR_MODE
         color: color
-      @sendColor(color)
+      @sendColor(Color(newColor))
       Promise.resolve()
 
     setWhite: ->
       @_updateState mode: @WHITE_MODE
       @setColor("#FFFFFF")
-      # TODO: set device to white
       Promise.resolve()
 
     setBrightness: (newBrightness) ->
       @_updateState brightness: newBrightness
-      if @mode
-        color = Color(@color).rgb()
-      else
-        color =
-          r: 255
-          g: 255
-          b: 255
-      # TODO: adjust brightness
+      env.logger.debug("setBrightness not implemented yet")
       Promise.resolve()
 
     sendColor: (newColor) =>
-      env.logger.debug("sending color: " + newColor.constructor.name)
-      if newColor == null
-        newColor = @color
-      @sendHyperionCommand("color", [newColor.r, newColor.g, newColor.b])
+      this.connectToHyperion().then( (hyperion) =>
+        hyperion.setColor(newColor.rgbArray(), (error, result) =>
+          if typeof err != 'undefined'
+            env.logger.error("Error setting color " + newColor + ". Error: " + error)
+          else
+            env.logger.debug("Color set to " + newColor)
+        )
+      ).catch( (error) =>
+        throw new Error("Caught error: " + error)
+      ).done()
 
-    sendBlacklevel: (blacklevel) =>
-      @sendHyperionCommand("blacklevel", blacklevel)
+    connectToHyperion: (resolve) =>
+      if @_connected
+        return Promise.resolve(@hyperion)
+      else
+        @hyperion = new Hyperion(@config.addr, @config.port)
+        @hyperion.on 'error', (error) =>
+          env.logger.console.error("Error connecting to hyperion:" + error)
+          @_connected = false
+        return eventToPromise(@hyperion, "connect").then( =>
+          env.logger.info("Connected to hyperion!")
+          @_connected = true
+          return @hyperion
+        )
 
-    sendHyperionCommand: (command, params, priority) =>
-      if priority == null
-        priority = 100
-      data = null
-      if command == "color"
-        data = {"command":"color", "priority":priority,"color":params}
-      else if command == "blacklevel"
-        data = {"command":"transform","transform":{"blacklevel":params}}
-
-      if data != null
-        client = new net.Socket()
-        env.logger.info("data = " + JSON.stringify(data))
-        client.connect(@port, @host, ( => client.write(JSON.stringify(data) + "\n")) )
-
-        client.on 'data', (data) =>
-          env.logger.debug("Response: " + data.toString().trim())
-          client.end()
-
-        client.on 'error', (err) =>
-          env.logger.debug("Error connecting to hyperion device. Error code was: " + err.code)
-          client.end()
-  return Hyperion
+  return HyperionLedLight

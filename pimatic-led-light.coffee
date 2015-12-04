@@ -8,7 +8,7 @@ module.exports = (env) ->
   unless process.env.NODE_ENV is 'travis-test'
     Blinkstick = require('./devices/blinkstick')(env)
   DummyLedLight = require('./devices/dummy')(env)
-  Hyperion = require('./devices/hyperion')(env)
+  HyperionLedLight = require('./devices/hyperion')(env)
 
   # import preadicares and actions
   ColorActionProvider = require('./predicates_and_actions/color_action')(env)
@@ -45,8 +45,8 @@ module.exports = (env) ->
         createCallback: (config) -> return new DummyLedLight(config)
 
       @framework.deviceManager.registerDeviceClass 'Hyperion',
-        configDef: deviceConfigDef.Hyperion
-        createCallback: (config) -> return new Hyperion(config)
+        configDef: deviceConfigDef.HyperionLedLight
+        createCallback: (config) -> return new HyperionLedLight(config)
 
       @framework.ruleManager.addActionProvider(new ColorActionProvider(@framework))
 

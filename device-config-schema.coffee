@@ -72,7 +72,7 @@ module.exports = {
     type: "object"
     properties: {}
   },
-  Hyperion: {
+  HyperionLedLight: {
     title: "Hyperion",
     type: "object"
     properties:
