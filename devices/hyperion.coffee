@@ -78,7 +78,7 @@ module.exports = (env) ->
       this.connectToHyperion().then( (hyperion) =>
         hyperion.setColor(color)
       ).catch( (error) =>
-        throw new Error("Caught error: " + error)
+        env.logger.error("Caught error: " + error)
       ).done()
 
     connectToHyperion: (resolve) =>
@@ -87,7 +87,9 @@ module.exports = (env) ->
       else
         @hyperion = new Hyperion(@config.addr, @config.port)
         @hyperion.on 'error', (error) =>
-          env.logger.console.error("Error connecting to hyperion:" + error)
+          env.logger.error("Error connecting to hyperion.")
+          if (error?)
+            env.logger.error(error)
           @_connected = false
         return eventToPromise(@hyperion, "connect").then( =>
           env.logger.info("Connected to hyperion!")
