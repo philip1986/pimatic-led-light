@@ -28,14 +28,25 @@ module.exports = (env) ->
       state = _.assign @getState(), attr
       super null, state
 
+    setMaxValue = (color, brightness) ->
+      return parseInt((color / 255) * (brightness * 2.55), 10)
+
+    # turning on sets color to white
     turnOn: ->
       @_updateState power: true
-      env.logger.debug("turnOn not implemented yet")
+      if @mode
+        color = Color(@color)
+      else
+        color = Color("#FFFFFF")
+      @sendColor(color)
       Promise.resolve()
 
+    # turning off means setting hyperion back to default state (usually capture)
     turnOff: ->
       @_updateState power: false
-      env.logger.debug("turnOff not implemented yet")
+      this.connectToHyperion().then( (hyperion) =>
+        hyperion.clear()
+      )
       Promise.resolve()
 
     setColor: (newColor) ->
@@ -53,17 +64,19 @@ module.exports = (env) ->
 
     setBrightness: (newBrightness) ->
       @_updateState brightness: newBrightness
-      env.logger.debug("setBrightness not implemented yet")
+      if @mode
+        color = Color(@color)
+      else
+        color = Color("#FFFFFF")
+      @setColor(color)
       Promise.resolve()
 
     sendColor: (newColor) =>
+      color = newColor.rgbArray().map( (value) =>
+        return setMaxValue(value, @brightness)
+      )
       this.connectToHyperion().then( (hyperion) =>
-        hyperion.setColor(newColor.rgbArray(), (error, result) =>
-          if typeof err != 'undefined'
-            env.logger.error("Error setting color " + newColor + ". Error: " + error)
-          else
-            env.logger.debug("Color set to " + newColor)
-        )
+        hyperion.setColor(color)
       ).catch( (error) =>
         throw new Error("Caught error: " + error)
       ).done()
