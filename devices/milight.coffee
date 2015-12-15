@@ -63,7 +63,7 @@ module.exports = (env) ->
       @_updateState
         mode: @WHITE_MODE
 
-      @setBrightness @brightnessb
+      @setBrightness @brightness
       Promise.resolve()
 
     setBrightness: (newBrightness) ->

@@ -2,13 +2,13 @@ module.exports = (env) ->
   Promise = env.require 'bluebird'
   _ = require 'lodash'
   Color = require 'color'
-  nodeBlinkstick = require 'blinkstick'
   BaseLedLight = require('./base')(env)
 
 
   class Blinkstick extends BaseLedLight
 
     constructor: (@config, lastState) ->
+      nodeBlinkstick = require 'blinkstick'
       if @config.serial
         @device = new nodeBlinkstick.findBySerial(@config.serial)
       else

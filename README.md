@@ -88,5 +88,5 @@ Get the sketch from here https://github.com/henryk/openmili and change the CE an
   - by color picker (in UI)
   - by name (in rules e.g. red)
   - by hex (in rules e.g. #00FF00)
-  - by teampature variable from weather plugin (in rules e.g. $weather.temperature)
+  - by temperature variable from weather plugin (in rules e.g. $weather.temperature)
 

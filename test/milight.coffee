@@ -46,7 +46,7 @@ describe 'Milight', ->
       DriverStub.sendCommands.firstCall.args[0].should.eql nodeMilight.commands.rgbw.on(config.zone)
       # set device into white mode
       DriverStub.sendCommands.secondCall.args[0].should.eql nodeMilight.commands.rgbw.whiteMode(config.zone)
-      # set brigghtness
+      # set brightness
       DriverStub.sendCommands.thirdCall.args[0].should.eql nodeMilight.commands.rgbw.brightness(device.brightness)
 
   describe '#turnOff', ->
