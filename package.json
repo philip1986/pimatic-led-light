@@ -4,21 +4,25 @@
   "author": "Philip Patzer <philip.patzer@gmail.com> (https://github.com/philip1986)",
   "main": "pimatic-led-light",
   "version": "0.1.0",
+  "license": "GPL-2.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/philip1986/pimatic-led-light.git"
   },
+  "bugs": {
+    "url": "https://github.com/philip1986/pimatic-led-light/issues"
+  },
   "configSchema": "led-light-schema.coffee",
   "scripts": {
-      "test": "node_modules/.bin/mocha test"
-    },
+    "test": "node_modules/.bin/mocha test"
+  },
   "dependencies": {
     "cassert": "^0.1.2",
     "color": "^0.8.0",
     "iwy_master": "0.2.2",
-    "node-milight-promise": ">=0.0.2",
+    "node-milight-promise": ">=0.0.3",
     "node-milight-rf24": ">=0.1.1",
-    "lodash": "^3.5.0",
+    "lodash": "^3.10.1",
     "blinkstick": "1.1.1"
   },
   "peerDependencies": {
@@ -32,8 +36,23 @@
     {
       "name": "Markus Minini",
       "url": "https://github.com/xento"
+    },
+    {
+      "name": "Marcus Wittig",
+      "url": "https://github.com/mwitig"
+    },
+    {
+      "name": "Anton",
+      "url": "https://github.com/tester22"
+    },
+    {
+      "name": "Fjuxx",
+      "url": "https://github.com/Fjuxx"
+    },
+    {
+      "name": "Oitzu",
+      "url": "https://github.com/Oitzu"
     }
-
   ],
   "devDependencies": {
     "bluebird": "^2.9.9",
