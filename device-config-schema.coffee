@@ -1,8 +1,8 @@
 # #led-light-plugin configuration options
 module.exports = {
   title: "Led light device config schemas"
-  LedLight: {
-    title: "LedLight"
+  IwyMaster: {
+    title: "IwyMaster LedLight"
     type: "object"
     properties:
       addr:

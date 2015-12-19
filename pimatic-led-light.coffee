@@ -19,7 +19,7 @@ module.exports = (env) ->
       deviceConfigDef = require('./device-config-schema.coffee')
 
       @framework.deviceManager.registerDeviceClass 'IwyMaster',
-        configDef: deviceConfigDef.LedLight
+        configDef: deviceConfigDef.IwyMaster
         createCallback: (config) -> return new IwyMaster(config)
 
       @framework.deviceManager.registerDeviceClass 'Wifi370',
