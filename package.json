@@ -17,6 +17,7 @@
     "test": "node_modules/.bin/mocha test"
   },
   "dependencies": {
+    "bluebird": "^3.1.1",
     "cassert": "^0.1.2",
     "color": "^0.8.0",
     "iwy_master": "0.2.2",
@@ -57,7 +58,6 @@
     }
   ],
   "devDependencies": {
-    "bluebird": "^2.9.9",
     "coffee-script": "^1.9.3",
     "decl-api": "0.0.17",
     "mocha": "^2.2.5",
