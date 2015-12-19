@@ -3,7 +3,7 @@
   "description": "Control LED lights",
   "author": "Philip Patzer <philip.patzer@gmail.com> (https://github.com/philip1986)",
   "main": "pimatic-led-light",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "license": "GPL-2.0",
   "repository": {
     "type": "git",
