@@ -54,8 +54,8 @@ $(document).on 'templateinit', (event) ->
     _onLocalChange: (element, fn) ->
       timeout = 500 # ms
 
-      # only exceute one command at the time
-      # delay the callback to protect the device aginst overflow
+      # only execute one command at the time
+      # delay the callback to protect the device against overflow
       queue = async.queue (arg, cb) =>
         fn.call(@, arg)
           .done( (data) ->
@@ -72,7 +72,7 @@ $(document).on 'templateinit', (event) ->
         return if payload?.origin is 'remote'
         return if @[element]?() is $(e.target).val()
         # flush queue to do not pile up commands
-        # latest command has highest prioraty
+        # latest command has highest priority
         queue.kill() if queue.length() > 2
         queue.push $(e.target).val()
 
