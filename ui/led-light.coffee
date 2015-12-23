@@ -50,31 +50,36 @@ $(document).on 'templateinit', (event) ->
       @brightnessSlider.val(@brightness()).trigger 'change', [origin: 'remote']
       @powerSlider.val(@power()).trigger 'change', [origin: 'remote']
 
-
-    _onLocalChange: (element, fn) ->
-      timeout = 500 # ms
+      timeout = 50 # ms
 
       # only execute one command at the time
       # delay the callback to protect the device against overflow
-      queue = async.queue (arg, cb) =>
-        fn.call(@, arg)
-          .done( (data) ->
-            ajaxShowToast(data)
-            setTimeout cb, timeout
-          )
-          .fail( (data) ->
-            ajaxAlertFail(data)
-            setTimeout cb, timeout
-          )
+      @queue = async.queue (task, cb) =>
+        task.fn.call(@, task.arg)
+        .done( (data) ->
+          ajaxShowToast(data)
+          setTimeout cb, timeout
+        )
+        .fail( (data) ->
+          ajaxAlertFail(data)
+          setTimeout cb, timeout
+        )
       , 1 # concurrency
+
+
+    _onLocalChange: (element, fn) ->
 
       $('#index').on "change", "#item-lists ##{@id} .light-#{element}", (e, payload) =>
         return if payload?.origin is 'remote'
         return if @[element]?() is $(e.target).val()
+        e.stopPropagation()
         # flush queue to do not pile up commands
         # latest command has highest priority
-        queue.kill() if queue.length() > 2
-        queue.push $(e.target).val()
+        @queue.kill() if @queue.length() > 2
+        @queue.push
+          fn: fn
+          arg: $(e.target).val()
+        Promise.resolve
 
     _onRemoteChange: (attributeString, el) ->
       attribute = @getAttribute(attributeString)
