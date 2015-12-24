@@ -8,6 +8,7 @@ module.exports = (env) ->
   unless process.env.NODE_ENV is 'travis-test'
     Blinkstick = require('./devices/blinkstick')(env)
   DummyLedLight = require('./devices/dummy')(env)
+  HyperionLedLight = require('./devices/hyperion')(env)
 
   # import preadicares and actions
   ColorActionProvider = require('./predicates_and_actions/color_action')(env)
@@ -19,7 +20,7 @@ module.exports = (env) ->
       deviceConfigDef = require('./device-config-schema.coffee')
 
       @framework.deviceManager.registerDeviceClass 'IwyMaster',
-        configDef: deviceConfigDef.LedLight
+        configDef: deviceConfigDef.IwyMaster
         createCallback: (config) -> return new IwyMaster(config)
 
       @framework.deviceManager.registerDeviceClass 'Wifi370',
@@ -44,6 +45,10 @@ module.exports = (env) ->
         configDef: deviceConfigDef.DummyLedLight
         createCallback: (config) -> return new DummyLedLight(config)
 
+      @framework.deviceManager.registerDeviceClass 'Hyperion',
+        configDef: deviceConfigDef.HyperionLedLight
+        createCallback: (config) -> return new HyperionLedLight(config)
+
       @framework.ruleManager.addActionProvider(new ColorActionProvider(@framework))
       @framework.ruleManager.addActionProvider(new ModeActionProvider(@framework))
 
@@ -57,6 +62,7 @@ module.exports = (env) ->
           mobileFrontend.registerAssetFile 'html', 'pimatic-led-light/ui/led-light.html'
           mobileFrontend.registerAssetFile 'js', 'pimatic-led-light/ui/vendor/spectrum.js'
           mobileFrontend.registerAssetFile 'css', 'pimatic-led-light/ui/vendor/spectrum.css'
+          mobileFrontend.registerAssetFile 'js', 'pimatic-led-light/ui/vendor/async.js'
         else
           env.logger.warn 'your plugin could not find the mobile-frontend. No gui will be available'
 

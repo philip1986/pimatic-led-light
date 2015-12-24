@@ -7,8 +7,6 @@ $(document).on 'templateinit', (event) ->
 
       @id = templData.deviceId
 
-      @debounceTimerId = null
-
       @power = null
       @brightness = null
       @color = null
@@ -52,17 +50,31 @@ $(document).on 'templateinit', (event) ->
       @brightnessSlider.val(@brightness()).trigger 'change', [origin: 'remote']
       @powerSlider.val(@power()).trigger 'change', [origin: 'remote']
 
-    _debounce: (fn, timeout) ->
-      clearTimeout @debounceTimerId if @debounceTimerId
-      @debounceTimerId = setTimeout fn, timeout
 
     _onLocalChange: (element, fn) ->
+      timeout = 500 # ms
+
+      # only execute one command at the time
+      # delay the callback to protect the device against overflow
+      queue = async.queue (arg, cb) =>
+        fn.call(@, arg)
+          .done( (data) ->
+            ajaxShowToast(data)
+            setTimeout cb, timeout
+          )
+          .fail( (data) ->
+            ajaxAlertFail(data)
+            setTimeout cb, timeout
+          )
+      , 1 # concurrency
+
       $('#index').on "change", "#item-lists ##{@id} .light-#{element}", (e, payload) =>
         return if payload?.origin is 'remote'
         return if @[element]?() is $(e.target).val()
-        @_debounce =>
-          fn.call @, $(e.target).val()
-        , 50
+        # flush queue to do not pile up commands
+        # latest command has highest priority
+        queue.kill() if queue.length() > 2
+        queue.push $(e.target).val()
 
     _onRemoteChange: (attributeString, el) ->
       attribute = @getAttribute(attributeString)
@@ -76,30 +88,19 @@ $(document).on 'templateinit', (event) ->
         el.val(@[attributeString]()).trigger 'change', [origin: 'remote']
 
     _setPower: (state) ->
-
       if state is 'on'
-        @device.rest.turnOn({}, global: no)
-          .done(ajaxShowToast)
-          .fail(ajaxAlertFail)
+        @device.rest.turnOn {}, global: no
       else
-        @device.rest.turnOff({}, global: no)
-          .done(ajaxShowToast)
-          .fail(ajaxAlertFail)
+        @device.rest.turnOff {}, global: no
 
     _setColor: (colorCode) ->
       unless colorCode
-        @device.rest.setWhite({}, global: no)
-          .done(ajaxShowToast)
-          .fail(ajaxAlertFail)
+        @device.rest.setWhite {}, global: no
       else
-        @device.rest.setColor({colorCode: colorCode},  global: no)
-          .done(ajaxShowToast)
-          .fail(ajaxAlertFail)
+        @device.rest.setColor colorCode: colorCode,  global: no
 
     _setBrightness: (brightnessValue) ->
-      @device.rest.setBrightness({brightnessValue: brightnessValue}, global: no)
-        .done(ajaxShowToast)
-        .fail(ajaxAlertFail)
+      @device.rest.setBrightness {brightnessValue: brightnessValue}, global: no
 
   # register the item-class
   pimatic.templateClasses['led-light'] = LedLightItem

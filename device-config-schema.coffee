@@ -1,8 +1,8 @@
 # #led-light-plugin configuration options
 module.exports = {
   title: "Led light device config schemas"
-  LedLight: {
-    title: "LedLight"
+  IwyMaster: {
+    title: "IwyMaster LedLight"
     type: "object"
     properties:
       addr:
@@ -71,5 +71,18 @@ module.exports = {
     title: "DummyLedLight"
     type: "object"
     properties: {}
+  },
+  HyperionLedLight: {
+    title: "Hyperion",
+    type: "object"
+    properties:
+      addr:
+        description: "IP-Address of hyperion device"
+        type: "string"
+        default: "localhost"
+      port:
+        description: "Port of hyperion device"
+        type: "string",
+        default: "19444"
   }
 }
