@@ -7,7 +7,11 @@ module.exports = (env) ->
 
   class IwyMaster extends BaseLedLight
     constructor: (@config) ->
-      @device = new IwyMasterDriver @config.addr, @config.device
+      if @config.class is 'Wifi370'
+        deviceType = IwyMasterDriver.DEVICES.WIFI370
+      else
+        deviceType = IwyMasterDriver.DEVICES.IWY_MASTER
+      @device = new IwyMasterDriver @config.addr, @config.port, deviceType
       @device.on 'error', (err) ->
         env.logger.warn 'light error:', err
 
@@ -46,4 +50,3 @@ module.exports = (env) ->
       return Promise.resolve() if @brightness is newBrightness
       @device.setBrightness newBrightness, @_updateState.bind(@)
       Promise.resolve()
-
