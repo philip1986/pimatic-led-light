@@ -97,7 +97,7 @@ $(document).on 'templateinit', (event) ->
       unless colorCode
         @device.rest.setWhite {}, global: no
       else
-        @device.rest.setColor colorCode: colorCode,  global: no
+        @device.rest.setColor {colorCode: colorCode},  global: no
 
     _setBrightness: (brightnessValue) ->
       @device.rest.setBrightness {brightnessValue: brightnessValue}, global: no
