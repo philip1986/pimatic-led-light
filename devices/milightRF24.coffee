@@ -26,6 +26,10 @@ module.exports = (env) ->
       
       events.EventEmitter.call(this);
 
+      @gateway.on("Sending", (data) ->
+        env.logger.debug data
+      )
+      
       @gateway.on("Received", (data) ->
         env.logger.debug data
         
@@ -151,6 +155,7 @@ module.exports = (env) ->
       @brightness = 100
       @color = "FFFF00"
       @onMode = @COLOR_MODE
+      @looping = false
       
       initState = _.clone lastState
       for key, value of lastState
@@ -271,12 +276,17 @@ module.exports = (env) ->
     
     setBrightness: (newBrightness, send) ->
       self = @
+
       if @power then @_updateState brightness: newBrightness
       
       @zones.forEach (z) ->
-        unless z.send is false or send is false
+        unless z.send is false or send is false or self.looping is true
           self.gateway.setBrightness(z.addr, z.zone, newBrightness) if self.power
 
+      if send is false
+        @looping = true
+      else
+        @looping = false
       Promise.resolve()
 
   return MilightRF24
