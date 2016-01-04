@@ -19,6 +19,9 @@ module.exports = {
       zone:
         description: "Zone [0 - 4], 0 = switches all zones"
         type: "number"
+      type:
+        descrition: "The type of milight, Color or White"
+        type: "string"
   },
   MilightRF24: {
     title: "Milight"
