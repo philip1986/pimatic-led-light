@@ -49,7 +49,7 @@ module.exports = (env) ->
     turnOff: ->
       @_updateState power: false
 
-      if @config.type == "Color"
+      if @config.type == "White"
         @device.sendCommands(nodeMilight.commands.white.off(@zone))        
       else
         @device.sendCommands(nodeMilight.commands.rgbw.off(@zone))
