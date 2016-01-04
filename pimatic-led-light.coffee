@@ -49,8 +49,9 @@ module.exports = (env) ->
         configDef: deviceConfigDef.HyperionLedLight
         createCallback: (config) -> return new HyperionLedLight(config)
 
-      @framework.ruleManager.addActionProvider(new ColorActionProvider(@framework))
       @framework.ruleManager.addActionProvider(new ModeActionProvider(@framework))
+      @framework.ruleManager.addActionProvider(new ColorActionProvider(@framework))
+
 
       # wait till all plugins are loaded
       @framework.on "after init", =>
