@@ -4,12 +4,19 @@
       <div class="light-label-container">
         <label data-bind="text: name, tooltip: $data.labelTooltipHtml" class="device-label"></label>
       </div>
-      <div class="light-brightness-container">
-        <input min="0" max="100" step="1" class="light-brightness">
-      </div>
+
+      <!-- begin of popup markup -->
       <div class="light-color-container">
-        <input class="light-color">
+        <div class="popup-button-container">
+          <a id="rnd-id" class="popup-button ui-btn ui-btn-inline"></a>
+        </div>
+        <div class="popup-content-container">
+          <div class="light-color-slider-container"><input min="0" max="359" step="1" class="light-color"></div>
+          <div class="light-brightness-slider-container"><input min="0" max="99" step="1" class="light-brightness"></div>
+        </div>
       </div>
+      <!-- end of popup markup-->
+
       <div class="light-power-container">
         <select data-bind="attr: { value: power }" class="light-power">
           <option value="off">Off</option>

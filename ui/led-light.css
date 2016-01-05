@@ -1,6 +1,4 @@
 
-.light-container {}
-
 .light-label-container, .light-color-container, .light-brightness-container {
     float: left;
 }
@@ -24,8 +22,79 @@
   margin-left: 5px;
 }
 
-.light-power-container {
-  /*margin-right: 20%;*/
-  /*margin-top: -20px;*/
+.light-color-container .ui-slider {
+  margin-top: 3px;
 }
 
+.light-color-container {
+  position: absolute;
+  width: 100px;
+  height: 30px;
+  right: 155px;
+  /*margin-left: 5px;*/
+}
+
+#rnd-id {
+  margin: 0;
+  left: 57%;
+  bottom: 1px;
+}
+
+.popup-button-container {
+  position:relative;
+  width: 0px;
+  /*margin-left: 10%;*/
+  float: right;
+}
+
+.popup-button {
+  width: 1px;
+  height: 10px;
+  -moz-border-radius: 50px;
+  -webkit-border-radius: 50px;
+  border-radius: 50px;
+}
+
+
+.popup-content-container {
+  display: none;
+  z-index: 100;
+  width: 300px;
+  height: 80px;
+  top: 60px;
+  right: 45%;
+  background-color: white;
+  position: relative;
+  -moz-border-radius:    10px;
+  -webkit-border-radius: 10px;
+  border-radius:         10px;
+  box-shadow: 0px 0px 1px #888;
+}
+.popup-content-container:before {
+   content:"";
+   position: absolute;
+   left: 50%;
+   top: -26px;
+   width: 0;
+   height: 0;
+   border-bottom: 26px solid #888;
+   border-left: 13px solid transparent;
+   border-right: 13px solid transparent;
+   /*box-shadow: 2px 2px 4px #888;*/
+}
+.popup-content-container:after {
+   content:"";
+   position: absolute;
+   left: 50%;
+   top: -26px;
+   width: 0;
+   height: 0;
+   border-bottom: 26px solid white;
+   border-left: 13px solid transparent;
+   border-right: 13px solid transparent;
+   /*box-shadow: 2px 2px 4px #888;*/
+}
+
+.light-container .ui-slider-track {
+  margin: 5px 10px;
+}
