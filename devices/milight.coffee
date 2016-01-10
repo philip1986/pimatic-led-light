@@ -28,32 +28,18 @@ module.exports = (env) ->
 
     turnOn: ->
       @_updateState power: true
-
-      if @config.type == "White"
-
-        @device.sendCommands(nodeMilight.commands.white.on(@zone))
-        @device.sendCommands(nodeMilight.commands.white.maxBright())
-
+      @device.sendCommands(nodeMilight.commands.rgbw.on(@zone))
+      if @mode
+        color = Color(@color).rgb()
+        @device.sendCommands(nodeMilight.commands.rgbw.rgb255(color.r, color.g, color.b))
       else
-
-        @device.sendCommands(nodeMilight.commands.rgbw.on(@zone))
-        if @mode
-          color = Color(@color).rgb()
-          @device.sendCommands(nodeMilight.commands.rgbw.rgb255(color.r, color.g, color.b))
-        else
-          @device.sendCommands(nodeMilight.commands.rgbw.whiteMode(@zone))
-          @device.sendCommands(nodeMilight.commands.rgbw.brightness(@brightness))
-
+        @device.sendCommands(nodeMilight.commands.rgbw.whiteMode(@zone))
+        @device.sendCommands(nodeMilight.commands.rgbw.brightness(@brightness))
       Promise.resolve()
 
     turnOff: ->
       @_updateState power: false
-
-      if @config.type == "White"
-        @device.sendCommands(nodeMilight.commands.white.off(@zone))        
-      else
-        @device.sendCommands(nodeMilight.commands.rgbw.off(@zone))
-
+      @device.sendCommands(nodeMilight.commands.rgbw.off(@zone))
       Promise.resolve()
 
     setColor: (newColor) ->

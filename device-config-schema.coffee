@@ -19,9 +19,17 @@ module.exports = {
       zone:
         description: "Zone [0 - 4], 0 = switches all zones"
         type: "number"
-      type:
-        descrition: "The type of milight, Color or White"
+  },
+  MilightCWWW: {
+    title: "Milight"
+    type: "object"
+    properties:
+      addr:
+        description: "IP-Address of light device"
         type: "string"
+      zone:
+        description: "Zone [0 - 4], 0 = switches all zones"
+        type: "number"
   },
   MilightRF24: {
     title: "Milight"
