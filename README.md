@@ -9,6 +9,7 @@ Currently supported:
   - [MilightRF24] (https://github.com/henryk/openmili)
   - [Blinkstick] (https://www.blinkstick.com)
   - [Hyperion] (https://github.com/tvdzwan/hyperion/wiki)
+  - [Hue] (http://wwww.meethue.com)
 
 ## Installation
 
@@ -102,6 +103,25 @@ Get the sketch from here https://github.com/henryk/openmili and change the CE an
       "addr": "xxx.xxx.xxx.xxx"
     }
 ```
+
+### For Hue
+
+```
+    {
+      "id": "some_id",
+      "name": "some_name",
+      "class": "Hue",
+      "addr": "xxx.xxx.xxx.xxx",
+      "username": "your username",
+      "hueId": 1,
+      "isGroup": false
+    }
+```
+
+You need to create an `username` on your bridge to use this plugin. See the 
+[hue Developer Program Documentation](http://www.developers.meethue.com/documentation/getting-started) 
+for details. If you're planning to use the [Hue Emulator](http://steveyo.github.io/Hue-Emulator/) 
+you can use the username "newdeveloper".
 
 ## Features
 

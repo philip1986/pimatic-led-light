@@ -84,5 +84,31 @@ module.exports = {
         description: "Port of hyperion device"
         type: "string",
         default: "19444"
+  },
+  Hue: {
+    title: "Hue Light",
+    type: "object"
+    properties:
+      addr:
+        description: "IP-Address of hue bridge"
+        type: "string"
+      username:
+        description: "Username registered (white-listed) on the bridge for PUT access"
+        type: "string"
+      hueId:
+        description: "The light or group id to be controlled"
+        type: "number"
+      isGroup:
+        description: "If set to true the id property is group id. It is a light id, otherwise."
+        type: "boolean"
+        default: false
+      port:
+        description: "Port of hue bridge (provided for testing purposes)"
+        type: "number",
+        default: 80
+      timeout:
+        description: "Timeout in ms for a pending bridge request to complete"
+        type: "number"
+        default: 10000
   }
 }

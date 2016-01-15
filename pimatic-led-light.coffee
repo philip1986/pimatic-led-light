@@ -9,6 +9,7 @@ module.exports = (env) ->
     Blinkstick = require('./devices/blinkstick')(env)
   DummyLedLight = require('./devices/dummy')(env)
   HyperionLedLight = require('./devices/hyperion')(env)
+  HueLight = require('./devices/hue')(env)
 
   # import preadicares and actions
   ColorActionProvider = require('./predicates_and_actions/color_action')(env)
@@ -47,6 +48,10 @@ module.exports = (env) ->
       @framework.deviceManager.registerDeviceClass 'Hyperion',
         configDef: deviceConfigDef.HyperionLedLight
         createCallback: (config) -> return new HyperionLedLight(config)
+
+      @framework.deviceManager.registerDeviceClass 'Hue',
+        configDef: deviceConfigDef.Hue
+        createCallback: (config) -> return new HueLight(config)
 
       @framework.ruleManager.addActionProvider(new ColorActionProvider(@framework))
 
