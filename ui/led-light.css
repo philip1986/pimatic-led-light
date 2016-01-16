@@ -29,3 +29,42 @@
   /*margin-top: -20px;*/
 }
 
+/* Preview box */
+.sp-preview {
+  top: 50%;
+  width:28px;
+  height: 28px;
+  border: none;
+  border-radius: 25px;
+  margin-right: 0px;
+  margin-top: 1px;
+}
+
+/* Preview color */
+.sp-preview-inner, .sp-alpha-inner, .sp-thumb-inner {
+  border-radius: 25px;
+  border: solid 1px #c1c1c1;
+}
+
+/* Color picker popup */
+.sp-container {
+  background-color: #ffffff;
+  border: solid 1px #c1c1c1;
+  xborder-radius: 2px;
+  box-shadow: 1px 1px 10px 0px rgba(50, 50, 50, 0.15);
+}
+
+.sp-dd {
+  padding: 2px;
+  font-size: 0px;
+  font-color: #ffffff;
+}
+
+.sp-replacer {
+  padding: unset;
+  *zoom: 0;
+  *display: inline;
+  border: none;
+  background: #ffffff;
+  border-radius: 25px;
+}

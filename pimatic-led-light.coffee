@@ -60,12 +60,12 @@ module.exports = (env) ->
         # Check if the mobile-frontend was loaded and get a instance
         mobileFrontend = @framework.pluginManager.getPlugin 'mobile-frontend'
         if mobileFrontend?
-          mobileFrontend.registerAssetFile 'js', 'pimatic-led-light/ui/led-light.coffee'
-          mobileFrontend.registerAssetFile 'css', 'pimatic-led-light/ui/led-light.css'
-          mobileFrontend.registerAssetFile 'html', 'pimatic-led-light/ui/led-light.html'
           mobileFrontend.registerAssetFile 'js', 'pimatic-led-light/ui/vendor/spectrum.js'
           mobileFrontend.registerAssetFile 'css', 'pimatic-led-light/ui/vendor/spectrum.css'
           mobileFrontend.registerAssetFile 'js', 'pimatic-led-light/ui/vendor/async.js'
+          mobileFrontend.registerAssetFile 'css', 'pimatic-led-light/ui/led-light.css'
+          mobileFrontend.registerAssetFile 'js', 'pimatic-led-light/ui/led-light.coffee'
+          mobileFrontend.registerAssetFile 'html', 'pimatic-led-light/ui/led-light.html'
         else
           env.logger.warn 'your plugin could not find the mobile-frontend. No gui will be available'
 
