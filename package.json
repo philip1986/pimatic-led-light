@@ -26,7 +26,7 @@
     "hyperion-client": "1.0.0",
     "iwy_master": "0.2.3",
     "lodash": "^3.10.1",
-    "node-hue-api": "^2.0.0",
+    "node-hue-api": "git+https://github.com/mwittig/node-hue-api.git",
     "node-milight-promise": ">=0.0.3",
     "node-milight-rf24": ">=0.1.1"
   },
