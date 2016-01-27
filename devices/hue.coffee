@@ -32,58 +32,48 @@ module.exports = (env) ->
       super null, state
 
     turnOn: ->
+      @_updateState power: true
       hueState = hue.lightState.create().on()
-      @device[@hueStateCommand](@hueId, hueState).then( =>
-        @_updateState power: true
-      ).catch( (error) =>
-        env.logger.error error
-      ).done()
+      @device[@hueStateCommand](@hueId, hueState)
+      Promise.resolve()
 
     turnOff: ->
+      @_updateState power: false
       hueState = hue.lightState.create().off()
-      @device[@hueStateCommand](@hueId, hueState).then( =>
-        @_updateState power: false
-      ).catch( (error) =>
-        env.logger.error error
-      ).done()
-
+      @device[@hueStateCommand](@hueId, hueState)
+      Promise.resolve()
+    
     setColor: (newColor) ->
       color = Color(newColor).rgb()
       hslColor = Color(newColor).hsl()
       if color.r == 255 && color.g == 255 && color.b == 255
         return @setWhite()
       else
-        hueState = hue.lightState.create().on().hsl(hslColor.h, hslColor.s, hslColor.l)
-        @device[@hueStateCommand](@hueId, hueState).then(
-          @_updateState
+        @_updateState
             mode: @COLOR_MODE
             color: color
             power: true
-        ).catch( (error) =>
-          env.logger.error error
-        ).done()
-
+        hueState = hue.lightState.create().on().hsl(hslColor.h, hslColor.s, hslColor.l)
+        @device[@hueStateCommand](@hueId, hueState)
+      Promise.resolve()
+    
     setWhite: () ->
-      hslColor = Color("#FFFFFF").hsl()
-      hueState = hue.lightState.create().on().hsl(hslColor.h, hslColor.s, hslColor.l)
-      @device[@hueStateCommand](@hueId, hueState).then(
-        @_updateState
+      @_updateState
           mode: @WHITE_MODE
           power: true
-      ).catch( (error) =>
-        env.logger.error error
-      ).done()
+      hslColor = Color("#FFFFFF").hsl()
+      hueState = hue.lightState.create().on().hsl(hslColor.h, hslColor.s, hslColor.l)
+      @device[@hueStateCommand](@hueId, hueState)
+      Promise.resolve()
 
     setBrightness: (newBrightness) ->
       # Maximum brightness for hue is 254 rather than 255
       # See also http://www.developers.meethue.com/content/maximum-brightness-254-or-255
-      hueState = hue.lightState.create().on().bri(Math.round(newBrightness * 254 / 100))
-      @device[@hueStateCommand](@hueId, hueState).then(
-        @_updateState
+      @_updateState
           brightness: newBrightness
           power: true
-      ).catch( (error) =>
-        env.logger.error error
-      ).done()
+      hueState = hue.lightState.create().on().bri(Math.round(newBrightness * 254 / 100))
+      @device[@hueStateCommand](@hueId, hueState)
+      Promise.resolve()
 
   return HueLight
