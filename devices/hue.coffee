@@ -32,58 +32,82 @@ module.exports = (env) ->
       super null, state
 
     turnOn: ->
-      hueState = hue.lightState.create().on()
-      @device[@hueStateCommand](@hueId, hueState).then( =>
-        @_updateState power: true
-      ).catch( (error) =>
-        env.logger.error error
-      ).done()
+      return new Promise( (resolve, reject) =>
+        hueState = hue.lightState.create().on()
+        @device[@hueStateCommand](@hueId, hueState).then( =>
+          @_updateState power: true
+          resolve()
+        ).catch( (error) =>
+          env.logger.error error.message ? error
+          reject("" + error.message ? error)
+        )
+      )
 
     turnOff: ->
-      hueState = hue.lightState.create().off()
-      @device[@hueStateCommand](@hueId, hueState).then( =>
-        @_updateState power: false
-      ).catch( (error) =>
-        env.logger.error error
-      ).done()
+      return new Promise( (resolve, reject) =>
+        hueState = hue.lightState.create().off()
+        @device[@hueStateCommand](@hueId, hueState).then( =>
+          @_updateState power: false
+          resolve()
+        ).catch( (error) =>
+          env.logger.error error.message ? error
+          reject("" + error.message ? error)
+        )
+      )
 
     setColor: (newColor) ->
-      color = Color(newColor).rgb()
-      hslColor = Color(newColor).hsl()
-      if color.r == 255 && color.g == 255 && color.b == 255
-        return @setWhite()
-      else
+      return new Promise( (resolve, reject) =>
+        color = Color(newColor).rgb()
+        hslColor = Color(newColor).hsl()
         hueState = hue.lightState.create().on().hsl(hslColor.h, hslColor.s, hslColor.l)
         @device[@hueStateCommand](@hueId, hueState).then(
           @_updateState
             mode: @COLOR_MODE
             color: color
+            brightness: hslColor.l
             power: true
+          resolve()
         ).catch( (error) =>
-          env.logger.error error
-        ).done()
+          env.logger.error error.message ? error
+          reject("" + error.message ? error)
+        )
+      )
 
     setWhite: () ->
-      hslColor = Color("#FFFFFF").hsl()
-      hueState = hue.lightState.create().on().hsl(hslColor.h, hslColor.s, hslColor.l)
-      @device[@hueStateCommand](@hueId, hueState).then(
-        @_updateState
-          mode: @WHITE_MODE
-          power: true
-      ).catch( (error) =>
-        env.logger.error error
-      ).done()
+      return new Promise( (resolve, reject) =>
+        hslColor = Color("#FFFFFF").hsl()
+        hueState = hue.lightState.create().on().hsl(hslColor.h, hslColor.s, hslColor.l)
+        @device[@hueStateCommand](@hueId, hueState).then(
+          @_updateState
+            mode: @WHITE_MODE
+            power: true
+          resolve()
+        ).catch( (error) =>
+          env.logger.error error.message ? error
+          reject("" + error.message ? error)
+        )
+      )
 
     setBrightness: (newBrightness) ->
-      # Maximum brightness for hue is 254 rather than 255
-      # See also http://www.developers.meethue.com/content/maximum-brightness-254-or-255
-      hueState = hue.lightState.create().on().bri(Math.round(newBrightness * 254 / 100))
-      @device[@hueStateCommand](@hueId, hueState).then(
-        @_updateState
-          brightness: newBrightness
-          power: true
-      ).catch( (error) =>
-        env.logger.error error
-      ).done()
+      return new Promise( (resolve, reject) =>
+        # Maximum brightness for hue is 254 rather than 255
+        # See also http://www.developers.meethue.com/content/maximum-brightness-254-or-255
+        hueState = hue.lightState.create().on().bri(Math.round(newBrightness * 254 / 100))
+        @device[@hueStateCommand](@hueId, hueState).then(
+          rgbColor = @color
+          unless rgbColor is ""
+            hslColor = Color(rgbColor).hsl()
+            hslColor.l = newBrightness
+            rgbColor = Color(hslColor).rgb()
+          @_updateState
+            brightness: newBrightness
+            power: true
+            color: rgbColor
+          resolve()
+        ).catch( (error) =>
+          env.logger.error error.message ? error
+          reject("" + error.message ? error)
+        )
+      )
 
   return HueLight
