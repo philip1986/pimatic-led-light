@@ -9,7 +9,6 @@ module.exports = (env) ->
 
   class BaseLedLight extends env.devices.Device
     WHITE_MODE: 'WHITE'
-    NIGHT_MODE: 'NIGHT'
     COLOR_MODE: 'COLOR'
 
     getTemplateName: -> 'led-light'
@@ -49,8 +48,6 @@ module.exports = (env) ->
         description: 'turns the light off'
       toggle:
         description: 'turns the light off or off'
-      setNight:
-        description: 'set the light to night mode if supported'
       setWhite:
         description: 'set the light to white mode'
       setColor:
@@ -98,14 +95,11 @@ module.exports = (env) ->
       env.logger.error err if err
 
       if state
-        if state.mode is @WHITE_MODE or state.mode is @NIGHT_MODE
-          @_setAttribute 'mode', state.mode
-        else if state.mode is @COLOR_MODE
-          @_setAttribute 'mode', @COLOR_MODE
-          if state.color is ''
-            @_setAttribute 'color', '#FFFFFF'
-          else
-            @_setAttribute 'color', Color(state.color).hexString()
+        @_setAttribute 'mode', state.mode
+        
+        if state.color is not ''
+          @_setAttribute 'color', Color(state.color).hexString()
+
         #console.log "hexColor:", hexColor
         @_setPower state.power
         @_setAttribute 'brightness', state.brightness
@@ -124,7 +118,6 @@ module.exports = (env) ->
     turnOn: -> throw new Error "Function 'turnOn' is not implemented!"
     turnOff: -> throw new Error "Function 'turnOff' is not implemented!"
     setColor: -> throw new Error "Function 'setColor' is not implemented!"
-    setNight: -> throw new Error "Function 'setNight' is not implemented!"
     setWhite: -> throw new Error "Function 'setWhite' is not implemented!"
     setMode: -> throw new Error "Function 'setMode' is not implemented!"
     setBrightness: (brightnessValue) -> throw new Error "Function 'setBrightness' is not implemented!"
