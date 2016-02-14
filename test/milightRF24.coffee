@@ -136,7 +136,7 @@ describe 'MilightRF24', ->
 
   describe '#changeDimlevelTo', ->
     it 'should call the corresponding driver method', ->
-	  device.power = 'on'
+      device.power = 'on'
       device.changeDimlevelTo(50)
 
       DriverStub.setBrightness.calledTwice.should.equal true
