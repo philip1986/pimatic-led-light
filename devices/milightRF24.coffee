@@ -146,6 +146,7 @@ module.exports = (env) ->
   # registers for messages from the main class and checks if incoming messages are addressed at the registered ids and zone combination
   # sends changes from the gui to the main class, so that they are send to the arduino
   class MilightRF24Zone extends BaseLedLight
+    NIGHT_MODE: 'NIGHT'
 
     constructor: (@config, lastState, MilightRF24Gateway) ->
       self = @

@@ -29,12 +29,14 @@ module.exports = (env) ->
     turnOn: ->
       @_updateState power: true
       @device.sendCommands(nodeMilight.commands.rgbw.on(@zone))
-      if @mode
+      if @mode is @COLOR_MODE
         color = Color(@color).rgb()
         @device.sendCommands(nodeMilight.commands.rgbw.rgb255(color.r, color.g, color.b))
-      else
+      else if @mode is @WHITE_MODE
         @device.sendCommands(nodeMilight.commands.rgbw.whiteMode(@zone))
         @device.sendCommands(nodeMilight.commands.rgbw.brightness(@brightness))
+      else if @mode is @NIGHT_MODE
+        @device.sendCommands(nodeMilight.commands.rgbw.nightMode(@zone))
       Promise.resolve()
 
     turnOff: ->
@@ -66,6 +68,14 @@ module.exports = (env) ->
       @setBrightness @brightness
       Promise.resolve()
 
+    setNight: () ->
+      @device.sendCommands(nodeMilight.commands.rgbw.nightMode(@zone))
+
+      @_updateState
+        mode: @NIGHT_MODE
+
+      Promise.resolve()
+      
     setBrightness: (newBrightness) ->
       @_updateState brightness: newBrightness
       @device.sendCommands(

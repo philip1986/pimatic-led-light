@@ -34,7 +34,7 @@ module.exports = (env) ->
     # turning on sets color to white
     turnOn: ->
       @_updateState power: true
-      if @mode
+      if @mode is @COLOR_MODE
         color = Color(@color)
       else
         color = Color("#FFFFFF")
@@ -64,7 +64,7 @@ module.exports = (env) ->
 
     setBrightness: (newBrightness) ->
       @_updateState brightness: newBrightness
-      if @mode
+      if @mode is @COLOR_MODE
         color = Color(@color)
       else
         color = Color("#FFFFFF")

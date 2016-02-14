@@ -60,7 +60,7 @@ module.exports = (env) ->
 
     setBrightness: (newBrightness) ->
       @_updateState brightness: newBrightness
-      if @mode
+      if @mode is @COLOR_MODE
         color = Color(@color).rgb()
       else
         color =
