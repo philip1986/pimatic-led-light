@@ -115,10 +115,7 @@ describe 'MilightRF24', ->
         device.power = 'off'
         device.setColor('#AAAAAA')
 
-        DriverStub.setColor.calledTwice.should.equal true
-
-        DriverStub.setColor.firstCall.args.should.eql [ '5927', 0, 170, 170, 170 ]
-        DriverStub.setColor.secondCall.args.should.eql [ '485D', 0, 170, 170, 170 ]
+        DriverStub.setColor.calledTwice.should.equal false
 
   describe '#setBrightness', ->
     it 'should call the corresponding driver method', ->
@@ -135,13 +132,11 @@ describe 'MilightRF24', ->
         device.power = 'off'
         device.setBrightness(50)
 
-        DriverStub.setBrightness.calledTwice.should.equal true
-
-        DriverStub.setBrightness.firstCall.args.should.eql [ '5927', 0, 50 ]
-        DriverStub.setBrightness.secondCall.args.should.eql [ '485D', 0, 50 ]
+        DriverStub.setBrightness.calledTwice.should.equal false
 
   describe '#changeDimlevelTo', ->
     it 'should call the corresponding driver method', ->
+	  device.power = 'on'
       device.changeDimlevelTo(50)
 
       DriverStub.setBrightness.calledTwice.should.equal true
