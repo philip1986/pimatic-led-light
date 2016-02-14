@@ -112,7 +112,7 @@ describe 'MilightRF24', ->
 
     context 'device power is "off"', ->
       it 'should call the corresponding driver method', ->
-        device.power = 'off'
+        device.power = false
         device.setColor('#AAAAAA')
 
         DriverStub.setColor.calledTwice.should.equal false
@@ -129,14 +129,14 @@ describe 'MilightRF24', ->
 
     context 'device power is "off"', ->
       it 'should call the corresponding driver method', ->
-        device.power = 'off'
+        device.power = false
         device.setBrightness(50)
 
         DriverStub.setBrightness.calledTwice.should.equal false
 
   describe '#changeDimlevelTo', ->
     it 'should call the corresponding driver method', ->
-      device.power = 'on'
+      device.power = true
       device.changeDimlevelTo(50)
 
       DriverStub.setBrightness.calledTwice.should.equal true
