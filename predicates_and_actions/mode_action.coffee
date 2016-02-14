@@ -49,26 +49,31 @@ module.exports = (env) ->
 
           device = d
 
-          m.match [' to '], (m) ->
-            m.or [
-              (m) ->
-                # TODO: forward pattern to UI
-                m.match ['white'], (m) ->
-                  mode = 'WHITE'
-                  match = m.getFullMatch()
+          if typeof device.setNight == 'function'
+            m.match [' to '], (m) ->
+              m.or [
+                (m) ->
+                  # TODO: forward pattern to UI
+                  m.match ['night'], (m) ->
+                    mode = 'NIGHT'
+                    match = m.getFullMatch()
+              ]
+        
+          if device.hasAction("setWhite")
+            m.match [' to '], (m) ->
+              m.or [
+                (m) ->
+                  # TODO: forward pattern to UI
+                  m.match ['white'], (m) ->
+                    mode = 'WHITE'
+                    match = m.getFullMatch()
 
-              (m) ->
-                # TODO: forward pattern to UI
-                m.match ['night'], (m) ->
-                  mode = 'NIGHT'
-                  match = m.getFullMatch()
-
-              (m) ->
-                # TODO: forward pattern to UI
-                m.match ['color'], (m) ->
-                  mode = 'COLOR'
-                  match = m.getFullMatch()
-            ]
+                (m) ->
+                  # TODO: forward pattern to UI
+                  m.match ['color'], (m) ->
+                    mode = 'COLOR'
+                    match = m.getFullMatch()
+              ]
 
         if match?
           assert device?
