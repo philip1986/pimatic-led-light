@@ -37,7 +37,7 @@ describe 'MilightRF24', ->
     DriverStub.reset()
 
     # set default state
-    device.mode = false
+    device.mode = 'WHITE'
     device.color = ''
     device.power = 'off'
     device.brightness = 100
@@ -51,7 +51,7 @@ describe 'MilightRF24', ->
   describe '#getMode', ->
     it 'should return the current power state (white (false) by default)', (done) ->
       device.getMode().then (mode) ->
-        mode.should.equal false
+        mode.should.equal 'WHITE'
         done()
 
   describe '#turnOn', ->
