@@ -40,8 +40,6 @@ module.exports = (env) ->
             type: t.boolean
       getMode:
         description: 'returns the light mode'
-      setMode:
-        description: 'sets the light mode'
       turnOn:
         description: 'turns the light on'
       turnOff:
@@ -119,7 +117,6 @@ module.exports = (env) ->
     turnOff: -> throw new Error "Function 'turnOff' is not implemented!"
     setColor: -> throw new Error "Function 'setColor' is not implemented!"
     setWhite: -> throw new Error "Function 'setWhite' is not implemented!"
-    setMode: -> throw new Error "Function 'setMode' is not implemented!"
     setBrightness: (brightnessValue) -> throw new Error "Function 'setBrightness' is not implemented!"
     changeDimlevelTo: (dimLevel) -> @setBrightness(dimLevel)
 

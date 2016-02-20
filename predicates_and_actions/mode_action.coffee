@@ -27,7 +27,7 @@ module.exports = (env) ->
 
       parseAction: (input, context) =>
         iwyDevices = _(@framework.deviceManager.devices).values().filter(
-          (device) => device.hasAction("setMode")
+          (device) => typeof device.setMode == 'function'
         ).value()
 
         hadPrefix = false
@@ -59,7 +59,7 @@ module.exports = (env) ->
                     match = m.getFullMatch()
               ]
         
-          if device.hasAction("setWhite")
+          if typeof device.setMode == 'function'
             m.match [' to '], (m) ->
               m.or [
                 (m) ->

@@ -41,7 +41,7 @@ module.exports = (env) ->
     
     getDevice: (config, lastState) ->
       new MilightRF24Zone(config, lastState, @)
-      
+    
     setColor: (id, zone, r,g,b) ->
       env.logger.debug "Sending Color. Addr: #{id} Zone: #{zone} Red: #{r} Green: #{g} Blue: #{b}"
       @gateway.setColor(id, zone, r,g,b)
