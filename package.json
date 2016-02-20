@@ -22,7 +22,7 @@
     "color": "^0.8.0",
     "iwy_master": "0.2.3",
     "node-milight-promise": ">=0.0.3",
-    "node-milight-rf24": ">=0.1.1",
+    "node-milight-rf24": ">=0.1.5",
     "lodash": "^3.10.1",
     "blinkstick": "1.1.1",
     "hyperion-client": "1.0.0",
