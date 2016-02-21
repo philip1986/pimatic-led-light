@@ -109,7 +109,7 @@ $(document).on 'templateinit', (event) ->
       @_onRemoteChange 'color', @colorSlider
       @_onRemoteChange 'mode', @modeElement
 
-      @powerSlider.val(@power()).trigger 'change', [origin: 'remote']
+      @powerSlider.val("#{@power()}").trigger 'change', [origin: 'remote']
       @colorSlider.val(@_colorHue(@color())).trigger 'change', [origin: 'remote']
       @brightnessSlider.val(@brightness()).trigger 'change', [origin: 'remote']
       @modeElement.val(@mode()).trigger 'change', [origin: 'remote']
@@ -224,7 +224,7 @@ $(document).on 'templateinit', (event) ->
 
       @[attributeString] = ko.observable attribute.value()
       attribute.value.subscribe (newValue) =>
-        @[attributeString] newValue
+        @[attributeString] "#{newValue}"
 
         if attributeString is 'color'
           el.val(@_colorHue newValue).trigger 'change', [origin: 'remote']
@@ -232,7 +232,7 @@ $(document).on 'templateinit', (event) ->
           el.val(@[attributeString]()).trigger 'change', [origin: 'remote']
 
     _setPower: (state) ->
-      if state is 'on'
+      if state is 'true'
         @device.rest.turnOn {}, global: no
       else
         @device.rest.turnOff {}, global: no
