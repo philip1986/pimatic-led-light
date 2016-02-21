@@ -8,6 +8,10 @@ module.exports = {
       addr:
         description: "IP-Address of light device"
         type: "string"
+      supportedModes:
+        description: "Supported light device modes (e.g.: WHITE, COLOR)"
+        type: "array"
+        required: false
   },
   Milight: {
     title: "Milight"
@@ -19,6 +23,10 @@ module.exports = {
       zone:
         description: "Zone [0 - 4], 0 = switches all zones"
         type: "number"
+      supportedModes:
+        description: "Supported light device modes (e.g.: WHITE, COLOR)"
+        type: "array"
+        required: false
   },
   MilightRF24: {
     title: "Milight"
@@ -49,6 +57,10 @@ module.exports = {
               description: "Respond on received commands using this address and zone"
               type: "boolean"
               default: true
+            supportedModes:
+              description: "Supported light device modes (e.g.: WHITE, COLOR)"
+              type: "array"
+              required: false
   },
   Wifi370: {
     title: "LedLight"
@@ -57,6 +69,10 @@ module.exports = {
       addr:
         description: "IP-Address of light device"
         type: "string"
+      supportedModes:
+        description: "Supported light device modes (e.g.: WHITE, COLOR)"
+        type: "array"
+        required: false
   },
   Blinkstick: {
     title: "BlinkStick"
@@ -66,14 +82,22 @@ module.exports = {
         description: "serial of Blinkstick"
         type: "string"
         default: ""
+      supportedModes:
+        description: "Supported light device modes (e.g.: WHITE, COLOR)"
+        type: "array"
+        required: false
   },
   DummyLedLight: {
     title: "DummyLedLight"
     type: "object"
-    properties: {}
+    properties:
+      supportedModes:
+        description: "Supported light device modes (e.g.: WHITE, COLOR)"
+        type: "array"
+        required: false
   },
   HyperionLedLight: {
-    title: "Hyperion",
+    title: "Hyperion"
     type: "object"
     properties:
       addr:
@@ -82,7 +106,11 @@ module.exports = {
         default: "localhost"
       port:
         description: "Port of hyperion device"
-        type: "string",
+        type: "string"
         default: "19444"
+      supportedModes:
+        description: "Supported light device modes (e.g.: WHITE, COLOR)"
+        type: "array"
+        required: false
   }
 }

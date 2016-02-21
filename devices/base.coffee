@@ -24,8 +24,8 @@ module.exports = (env) ->
         unit: 'hex color'
       mode:
         description: 'mode of the light'
-        type: t.boolean
-        labels: ['color', 'white']
+        type: t.string
+        labels: ['COLOR', 'WHITE']
       brightness:
        description: 'brightness of the light'
        type: t.number
@@ -40,7 +40,7 @@ module.exports = (env) ->
           state:
             type: t.boolean
       getMode:
-        description: 'returns the light mode'
+        description: 'returns the light mode.'
       turnOn:
         description: 'turns the light on'
       turnOff:
@@ -49,6 +49,8 @@ module.exports = (env) ->
         description: 'turns the light off or off'
       setWhite:
         description: 'set the light to white mode'
+      getColor:
+        description: 'returns the light color'
       setColor:
         description: 'set a light color'
         params:
@@ -72,12 +74,24 @@ module.exports = (env) ->
       @name = @config.name
       @id = @config.id
 
-      @power = initState?.power or 'off'
+      @power = initState?.power or false
       @color = initState?.color or ''
       @brightness = initState?.brightness or 100
-      @mode = initState?.mode or false
+      @mode = initState?.mode or @WHITE_MODE
 
+      @_init()
       super()
+
+    _init: ->
+      if @power then @turnOn() else @turnOff()
+
+      if @mode is @WHITE_MODE
+        @setWhite()
+      else
+        @setColor @color
+
+      @setBrightness @brightness
+
 
     _setAttribute: (attributeName, value) ->
       unless @[attributeName] is value
@@ -85,28 +99,23 @@ module.exports = (env) ->
         @emit attributeName, value
 
     _setPower: (powerState) ->
-      #console.log "POWER" , powerState
       unless @power is powerState
         @power = powerState
-        @emit "power", if powerState then 'on' else 'off'
+        @emit 'power', powerState
 
     _updateState: (err, state) ->
       env.logger.error err if err
 
       if state
-        if state.mode is @WHITE_MODE
-          @_setAttribute 'mode', false
-          hexColor = ''
-        else if state.mode is @COLOR_MODE
-          @_setAttribute 'mode', true
-          if state.color is ''
-            hexColor = '#FFFFFF'
-          else
-            hexColor = Color(state.color).hexString()
-        #console.log "hexColor:", hexColor
+        @_setAttribute 'mode', state.mode
+        if state.color is ''
+          hexColor = '#FFFFFF'
+        else
+          hexColor = Color(state.color).hexString()
         @_setPower state.power
         @_setAttribute 'brightness', state.brightness
-        @_setAttribute 'color', hexColor
+        if hexColor
+          @_setAttribute 'color', hexColor
 
     getPower: -> Promise.resolve @power
     getColor: -> Promise.resolve @color
@@ -114,7 +123,7 @@ module.exports = (env) ->
     getBrightness: -> Promise.resolve @brightness
 
     getState: ->
-      mode: if @mode then @COLOR_MODE else @WHITE_MODE
+      mode: @mode
       color: if _.isString(@color) and not _.isEmpty(@color) then Color(@color).rgb() else ''
       power: @power
       brightness: @brightness
@@ -127,7 +136,7 @@ module.exports = (env) ->
     changeDimlevelTo: (dimLevel) -> @setBrightness(dimLevel)
 
     toggle: ->
-      if @power is 'off' then @turnOn() else @turnOff()
+      if @power is false then @turnOn() else @turnOff()
       Promise.resolve()
 
   return BaseLedLight

@@ -15,19 +15,20 @@ describe 'IWY Master', ->
   beforeEach ->
     device = loadPluginWithEnvAndConfig env, 'IwyMaster', config
 
+
   afterEach ->
     DriverStub.reset()
 
   describe '#getPower', ->
     it 'should return the current power state (false by default)', (done) ->
       device.getPower().then (power) ->
-        power.should.equal 'off'
+        power.should.equal false
         done()
 
   describe '#getMode', ->
     it 'should return the current power state (white by default)', (done) ->
       device.getMode().then (mode) ->
-        mode.should.equal false
+        mode.should.equal 'WHITE'
         done()
 
   describe '#turnOn', ->
@@ -37,25 +38,26 @@ describe 'IWY Master', ->
 
   describe '#turnOff', ->
     it 'should call the corresponding driver method', ->
-      device.power = 'on'
+      device.power = true
       device.turnOff()
       DriverStub.switchOff.calledOnce.should.equal true
 
   describe '#toggle', ->
     it 'should switch the power state to ON when it is OFF before', ->
-      device.power = 'off'
+      device.power = false
       device.toggle()
       DriverStub.switchOn.calledOnce.should.equal true
       DriverStub.switchOff.calledOnce.should.equal false
 
     it 'should switch the power state to OFF when it is ON before', ->
-      device.power = 'on'
+      device.power = true
       device.toggle()
       DriverStub.switchOn.calledOnce.should.equal false
       DriverStub.switchOff.calledOnce.should.equal true
 
   describe '#setWhite', ->
     it 'should call the corresponding driver method', ->
+      device.mode = 'COLOR'
       device.setWhite()
       DriverStub.setWhite.calledOnce.should.equal true
 
