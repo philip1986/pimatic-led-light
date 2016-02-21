@@ -25,7 +25,8 @@ To install the plugin on a Debian or Raspbian system libudev-dev must be install
       "id": "some_id",
       "name": "some_name",
       "class": "IwyMaster",
-      "addr": "xxx.xxx.xxx.xxx"
+      "addr": "xxx.xxx.xxx.xxx",
+      "supportedModes": [ "WHITE" | "COLOR"] // optional
     }
 ```
 
@@ -36,7 +37,8 @@ To install the plugin on a Debian or Raspbian system libudev-dev must be install
       "id": "some_id",
       "name": "some_name",
       "class": "Wifi370",
-      "addr": "xxx.xxx.xxx.xxx"
+      "addr": "xxx.xxx.xxx.xxx",
+      "supportedModes": [ "WHITE" | "COLOR"] // optional  
     }
 ```
 
@@ -48,7 +50,8 @@ To install the plugin on a Debian or Raspbian system libudev-dev must be install
       "name": "some_name",
       "class": "Milight",
       "addr": "xxx.xxx.xxx.xxx",
-      "zone": "Zone [0 - 4], 0 = switches all zones"
+      "zone": "Zone [0 - 4], 0 = switches all zones",
+      "supportedModes": [ "WHITE" | "COLOR"] // optional
     }
 ```
 
@@ -73,7 +76,8 @@ To install the plugin on a Debian or Raspbian system libudev-dev must be install
             "send": true,
             "receive": true
           }
-        ]
+        ],
+      "supportedModes": [ "WHITE" | "COLOR"] // optional
       }
 ```
 You will get your addr when you just add the parameter MilightRF24Port to your config and switch to the debug output in pimatic and change some settings with your remote.
@@ -88,7 +92,8 @@ Get the sketch from here https://github.com/henryk/openmili and change the CE an
       "id": "some_id",
       "name": "some_name",
       "class": "Blinkstick",
-      "serial": "xxx" // Only required if more than one Blinkstick is connected to the host.
+      "serial": "xxx", // Only required if more than one Blinkstick is connected to the host.
+      "supportedModes": [ "WHITE" | "COLOR"] // optional
     }
 ```
 
@@ -99,7 +104,8 @@ Get the sketch from here https://github.com/henryk/openmili and change the CE an
       "id": "some_id",
       "name": "some_name",
       "class": "Hyperion",
-      "addr": "xxx.xxx.xxx.xxx"
+      "addr": "xxx.xxx.xxx.xxx",
+      "supportedModes": [ "WHITE" | "COLOR"] // optional
     }
 ```
 
@@ -112,4 +118,3 @@ Get the sketch from here https://github.com/henryk/openmili and change the CE an
   - by name (in rules e.g. red)
   - by hex (in rules e.g. #00FF00)
   - by temperature variable from weather plugin (in rules e.g. $weather.temperature)
-
