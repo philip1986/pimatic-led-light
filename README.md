@@ -98,7 +98,7 @@ Get the sketch from here https://github.com/henryk/openmili and change the CE an
     {
       "id": "some_id",
       "name": "some_name",
-      "class": "Wifi370",
+      "class": "Hyperion",
       "addr": "xxx.xxx.xxx.xxx"
     }
 ```
