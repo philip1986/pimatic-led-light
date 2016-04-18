@@ -99,7 +99,8 @@ Get the sketch from here https://github.com/henryk/openmili and change the CE an
       "id": "some_id",
       "name": "some_name",
       "class": "Hyperion",
-      "addr": "xxx.xxx.xxx.xxx"
+      "addr": "xxx.xxx.xxx.xxx",
+      "priority": 100 // Only if you want to change the used priority, default is 100.
     }
 ```
 
@@ -112,4 +113,3 @@ Get the sketch from here https://github.com/henryk/openmili and change the CE an
   - by name (in rules e.g. red)
   - by hex (in rules e.g. #00FF00)
   - by temperature variable from weather plugin (in rules e.g. $weather.temperature)
-
