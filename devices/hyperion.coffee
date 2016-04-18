@@ -79,7 +79,7 @@ module.exports = (env) ->
         hyperion.setColor(color)
       ).catch( (error) =>
         env.logger.error("Caught error: " + error)
-      ).done()
+      )
 
     connectToHyperion: (resolve) =>
       if @_connected
