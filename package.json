@@ -25,7 +25,7 @@
     "node-milight-rf24": ">=0.1.1",
     "lodash": "^3.10.1",
     "blinkstick": "1.1.1",
-    "hyperion-client": "1.0.0",
+    "hyperion-client": "1.0.3",
     "event-to-promise": "0.6.0"
   },
   "peerDependencies": {

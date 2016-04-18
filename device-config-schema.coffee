@@ -84,5 +84,9 @@ module.exports = {
         description: "Port of hyperion device"
         type: "string",
         default: "19444"
+      priority:
+        description: "Priority used for hyperion calls"
+        type: "number"
+        default: 100
   }
 }
