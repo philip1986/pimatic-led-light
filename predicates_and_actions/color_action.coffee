@@ -3,7 +3,7 @@ module.exports = (env) ->
   Promise = env.require 'bluebird'
 
   assert = require 'cassert'
-  _ = require 'lodash'
+  _ = env.require('lodash')
   M = env.matcher
 
   color_schema = require '../color_schema'

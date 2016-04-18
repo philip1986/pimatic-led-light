@@ -1,6 +1,6 @@
 module.exports = (env) ->
   Promise = env.require 'bluebird'
-  _ = require 'lodash'
+  _ = env.require('lodash')
   Color = require 'color'
   nodeMilight = require 'node-milight-promise'
   BaseLedLight = require('./base')(env)

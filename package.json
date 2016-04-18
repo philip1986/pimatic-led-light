@@ -19,17 +19,16 @@
   "dependencies": {
     "bluebird": "^3.1.1",
     "cassert": "^0.1.2",
-    "color": "^0.8.0",
+    "color": "^0.11.1",
     "iwy_master": "0.2.3",
     "node-milight-promise": ">=0.0.3",
     "node-milight-rf24": ">=0.1.1",
-    "lodash": "^3.10.1",
-    "blinkstick": "1.1.1",
-    "hyperion-client": "1.0.0",
-    "event-to-promise": "0.6.0"
+    "blinkstick": "1.1.3",
+    "hyperion-client": "1.0.3",
+    "event-to-promise": "0.7.0"
   },
   "peerDependencies": {
-    "pimatic": "0.8.*"
+    "pimatic": ">=0.9.0 <1.0.0"
   },
   "engines": {
     "node": ">0.8.x",
@@ -59,9 +58,9 @@
   ],
   "devDependencies": {
     "coffee-script": "^1.9.3",
-    "decl-api": "0.0.17",
+    "decl-api": "0.0.21",
     "mocha": "^2.2.5",
-    "should": "^7.0.2",
+    "should": "^8.3.1",
     "sinon": "^1.15.4"
   }
 }
