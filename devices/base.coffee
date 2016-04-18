@@ -3,7 +3,6 @@ module.exports = (env) ->
 
   t = env.require('decl-api').types
   _ = env.require('lodash')
-  assert = require 'cassert'
   Color = require 'color'
 
 

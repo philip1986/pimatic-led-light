@@ -17,7 +17,6 @@
     "test": "node_modules/.bin/mocha test"
   },
   "dependencies": {
-    "bluebird": "^3.1.1",
     "cassert": "^0.1.2",
     "color": "^0.11.1",
     "iwy_master": "0.2.3",
