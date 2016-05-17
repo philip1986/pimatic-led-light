@@ -3,6 +3,7 @@ module.exports = (env) ->
   # import device wrappers
   IwyMaster = require('./devices/iwy_master')(env)
   Milight = require('./devices/milight')(env)
+  MilightCWWW = require('./devices/milightCWWW')(env)
   MilightRF24 = require('./devices/milightRF24')(env)
   Wifi370 = require('./devices/wifi370')(env)
   unless process.env.NODE_ENV is 'travis-test'
@@ -29,6 +30,10 @@ module.exports = (env) ->
       @framework.deviceManager.registerDeviceClass 'Milight',
         configDef: deviceConfigDef.Milight
         createCallback: (config, lastState) -> return new Milight(config, lastState)
+
+      @framework.deviceManager.registerDeviceClass 'MilightCWWW',
+        configDef: deviceConfigDef.MilightCWWW
+        createCallback: (config, lastState) -> return new MilightCWWW(config, lastState)
 
       @framework.deviceManager.registerDeviceClass 'MilightRF24',
         configDef: deviceConfigDef.MilightRF24
