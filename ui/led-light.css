@@ -1,16 +1,14 @@
 
-.light-container {}
-
-.light-label-container, .light-color-container, .light-brightness-container {
+.light-label-container {
     float: left;
 }
 
-.light-color-container{
-  padding-left: 15px;
+.light-color-container, .light-mode-container, .light-power-container {
+  float: right;
 }
 
 .light-label-container{
-  width: 20%;
+  width: 0;
   margin-right: 5px;
 }
 
@@ -22,10 +20,96 @@
   width: 40%;
   height: 30px;
   margin-left: 5px;
+  margin-bottom: 5px;
+}
+
+.light-brightness-slider-container {
+  height: 40px;
+}
+
+.light-color-container .ui-slider {
+  margin-top: 3px;
+}
+
+.light-color-container {
+  width: 10px;
+  height: 10px;
+  margin-right: 10px;
+}
+
+.popup-button  {
+  margin: 0 !important;
+  bottom: 1px !important;
+}
+
+.popup-button-container {
+  width: 0px;
+  margin: 0, 5px;
+  bottom: 1px;
+}
+
+.popup-button {
+  width: 1px;
+  height: 10px;
+  -moz-border-radius: 50px;
+  -webkit-border-radius: 50px;
+  border-radius: 50px;
+}
+
+.popup-content-container {
+  display: none;
+  z-index: 100;
+  width: 300px;
+  top: 23px;
+  right: 160px;
+  background-color: white;
+  position: relative;
+  -moz-border-radius:    10px;
+  -webkit-border-radius: 10px;
+  border-radius:         10px;
+  box-shadow: 0px 0px 1px #888;
+}
+.popup-content-container:before {
+   content:"";
+   position: absolute;
+   left: 55%;
+   top: -26px;
+   width: 0;
+   height: 0;
+   border-bottom: 26px solid #888;
+   border-left: 13px solid transparent;
+   border-right: 13px solid transparent;
+}
+.popup-content-container:after {
+   content:"";
+   position: absolute;
+   left: 55%;
+   top: -26px;
+   width: 0;
+   height: 0;
+   border-bottom: 26px solid white;
+   border-left: 13px solid transparent;
+   border-right: 13px solid transparent;
+}
+
+.light-container .ui-slider-track {
+  margin: 7px 10px;
+}
+
+.light-device-li {
+  height: 30px;
+  overflow: visible !important;
+}
+
+.light-mode-container {
+  margin: -3px 15px 0px 0px !important;
 }
 
 .light-power-container {
-  /*margin-right: 20%;*/
-  /*margin-top: -20px;*/
+  margin-left: 20px;
 }
 
+.mode-button-selected {
+  background: #007DCD !important;
+  color: #FFFFFF !important;
+}

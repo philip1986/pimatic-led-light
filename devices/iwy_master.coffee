@@ -11,42 +11,42 @@ module.exports = (env) ->
         deviceType = IwyMasterDriver.DEVICES.WIFI370
       else
         deviceType = IwyMasterDriver.DEVICES.IWY_MASTER
+
       @device = new IwyMasterDriver @config.addr, @config.port, deviceType
       @device.on 'error', (err) ->
         env.logger.warn 'light error:', err
 
       @_sync() # sync now
-
       super()
 
     _sync: ->
       @device.getState @_updateState.bind(@)
 
     turnOn: ->
-      return Promise.resolve() if @power is 'on'
+      return Promise.resolve() if @power
       @device.switchOn @_updateState.bind(@)
       Promise.resolve()
 
     turnOff: ->
-      return Promise.resolve() if @power is 'off'
+      return Promise.resolve() unless @power
       @device.switchOff @_updateState.bind(@)
       Promise.resolve()
 
     setColor: (newColor) ->
-      return Promise.resolve() if @color is newColor
+      unless @color is newColor
+        red  = Number("0x#{newColor[1..2]}")
+        green = Number("0x#{newColor[3..4]}")
+        blue = Number("0x#{newColor[5..6]}")
 
-      red  = Number("0x#{newColor[1..2]}")
-      green = Number("0x#{newColor[3..4]}")
-      blue = Number("0x#{newColor[5..6]}")
-
-      @device.setColor red, green, blue, @_updateState.bind(@)
+        @device.setColor red, green, blue, @_updateState.bind(@)
       Promise.resolve()
 
     setWhite: ->
-      @device.setWhite @_updateState.bind(@)
+      unless @mode is 'WHITE'
+        @device.setWhite @_updateState.bind(@)
       Promise.resolve()
 
     setBrightness: (newBrightness) ->
-      return Promise.resolve() if @brightness is newBrightness
-      @device.setBrightness newBrightness, @_updateState.bind(@)
+      unless @brightness is newBrightness
+        @device.setBrightness newBrightness, @_updateState.bind(@)
       Promise.resolve()

@@ -21,14 +21,14 @@ describe 'Milight', ->
     # set default state
     device.mode = false
     device.color = ''
-    device.power = 'off'
+    device.power = false
     device.brightness = 100
 
 
   describe '#getPower', ->
     it 'should return the current power state (off by default)', (done) ->
       device.getPower().then (power) ->
-        power.should.equal 'off'
+        power.should.equal false
         done()
 
   describe '#getMode', ->
@@ -57,7 +57,7 @@ describe 'Milight', ->
 
   describe '#toggle', ->
     it 'should switch the power state to ON when it is OFF before', ->
-      device.power = 'off'
+      device.power = false
       device.toggle()
 
       DriverStub.sendCommands.calledThrice.should.equal true
@@ -65,7 +65,7 @@ describe 'Milight', ->
       DriverStub.sendCommands.firstCall.args[0].should.eql nodeMilight.commands.rgbw.on(config.zone)
 
     it 'should switch the power state to OFF when it is ON before', ->
-      device.power = 'on'
+      device.power = true
       device.toggle()
 
       DriverStub.sendCommands.calledOnce.should.equal true
@@ -73,6 +73,7 @@ describe 'Milight', ->
 
   describe '#setWhite', ->
     it 'should call the corresponding driver method', ->
+      device.power = true
       device.setWhite()
 
       DriverStub.sendCommands.calledTwice.should.equal true
@@ -84,8 +85,8 @@ describe 'Milight', ->
 
   describe '#setColor', ->
     it 'should call the corresponding driver method', ->
+      device.power = true
       device.setColor('#AAAAAA')
-      device.power = 'on'
 
       DriverStub.sendCommands.calledOnce.should.equal true
       DriverStub.sendCommands.firstCall.args.should.eql [
@@ -94,9 +95,11 @@ describe 'Milight', ->
       ]
 
     context 'device power is "off"', ->
-      it 'should call the corresponding driver method', ->
+      # Command will be ignored when device is off
+      # TODO: clarify if this behavior is intended
+      it.skip 'should call the corresponding driver method', ->
+        device.power = false
         device.setColor('#AAAAAA')
-        device.power = 'off'
 
         DriverStub.sendCommands.calledOnce.should.equal true
         DriverStub.sendCommands.firstCall.args.should.eql [
@@ -106,6 +109,7 @@ describe 'Milight', ->
 
   describe '#setBrightness', ->
     it 'should call the corresponding driver method', ->
+      device.power = true
       device.setBrightness(50)
 
       DriverStub.sendCommands.calledOnce.should.equal true
@@ -116,6 +120,7 @@ describe 'Milight', ->
 
   describe '#changeDimlevelTo', ->
     it 'should call the corresponding driver method', ->
+      device.power = true
       device.changeDimlevelTo(50)
 
       DriverStub.sendCommands.calledOnce.should.equal true

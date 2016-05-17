@@ -1,25 +1,37 @@
 <script id="led-light-template" type="text/template">
-  <li data-bind="attr: { id: id }" class="sortable no-header">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <li data-bind="attr: { id: id }" class="sortable no-header light-device-li">
     <div class="light-container">
       <div class="light-label-container">
         <label data-bind="text: name, tooltip: $data.labelTooltipHtml" class="device-label"></label>
       </div>
-      <div class="light-brightness-container">
-        <input min="0" max="100" step="1" class="light-brightness">
-      </div>
-      <div class="light-color-container">
-        <input class="light-color">
-      </div>
+
       <div class="light-power-container">
         <select data-bind="attr: { value: power }" class="light-power">
-          <option value="off">Off</option>
-          <option value="on">On</option>
+          <option value=false>Off</option>
+          <option value=true>On</option>
         </select>
+      </div>
+
+      <div class="light-color-container">
+        <div class="popup-button-container">
+          <a class="popup-button ui-btn ui-btn-inline"></a>
+        </div>
+        <div class="popup-content-container">
+          <div class="light-color-slider-container"><input min="0" max="359" step="1" class="light-color"></div>
+          <div class="light-brightness-slider-container"><input min="0" max="99" step="1" class="light-brightness"></div>
+        </div>
+      </div>
+
+      <div data-role="controlgroup" data-type="horizontal" data-mini="true" data-enhanced="true" class="light-mode-container button-control ui-controlgroup ui-controlgroup-horizontal ui-corner-all ui-mini no-carousel-slide">
+        <input class="light-mode" style="display: none;">
+        <div class="ui-controlgroup-controls">
+          <a data-bind="click: selectMode('WHITE')" class="mode-btn white-mode-btn ui-btn ui-corner-all">White</a>
+          <a data-bind="click: selectMode('COLOR')" class="mode-btn test-mode-btn  ui-btn ui-corner-all">Test</a>
+          <a data-bind="click: selectMode('COLOR')" class="mode-btn color-mode-btn ui-btn ui-corner-all">Color</a>
+        </div>
       </div>
     </div>
     <span data-bind="text: ($data.error() ? $data.error() : '') " class="error"></span>
   </li>
 </script>
-
-
-

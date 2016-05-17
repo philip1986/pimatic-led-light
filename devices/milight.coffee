@@ -20,7 +20,6 @@ module.exports = (env) ->
       for key, value of lastState
         initState[key] = value.value
       super(initState)
-      if @power then @turnOn() else @turnOff()
 
     _updateState: (attr) ->
       state = _.assign @getState(), attr
@@ -29,7 +28,7 @@ module.exports = (env) ->
     turnOn: ->
       @_updateState power: true
       @device.sendCommands(nodeMilight.commands.rgbw.on(@zone))
-      if @mode
+      if @mode is @COLOR_MODE
         color = Color(@color).rgb()
         @device.sendCommands(nodeMilight.commands.rgbw.rgb255(color.r, color.g, color.b))
       else
@@ -60,9 +59,7 @@ module.exports = (env) ->
     setWhite: () ->
       @device.sendCommands(nodeMilight.commands.rgbw.whiteMode(@zone))
 
-      @_updateState
-        mode: @WHITE_MODE
-
+      @_updateState mode: @WHITE_MODE
       @setBrightness @brightness
       Promise.resolve()
 
