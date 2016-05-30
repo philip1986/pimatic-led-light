@@ -6,7 +6,9 @@ Currently supported:
   - [IWY Light Master] (http://iwy-light.de/gb/iwy-starter-sets/iwy-color-single-set-9w.html)
   - [WIFI370] (http://www.wifiledcontroller.com/#!wifi-370-controller/c1s9b)
   - [Milight] (http://www.milight.com)
+  - [MilightRF24] (https://github.com/henryk/openmili)
   - [Blinkstick] (https://www.blinkstick.com)
+  - [Hyperion] (https://github.com/tvdzwan/hyperion/wiki)
 
 ## Installation
 
@@ -16,13 +18,24 @@ To install the plugin on a Debian or Raspbian system libudev-dev must be install
 
 ## Configuration
 
-### For IwyMaster and Wifi370
+### For IwyMaster
 
 ```
     {
       "id": "some_id",
       "name": "some_name",
-      "class": "IwyMaster | Wifi370",
+      "class": "IwyMaster",
+      "addr": "xxx.xxx.xxx.xxx"
+    }
+```
+
+### For Wifi370
+
+```
+    {
+      "id": "some_id",
+      "name": "some_name",
+      "class": "Wifi370",
       "addr": "xxx.xxx.xxx.xxx"
     }
 ```
@@ -43,10 +56,10 @@ To install the plugin on a Debian or Raspbian system libudev-dev must be install
 
 ```
     {
-      "id": 'some_id'
-      "name": 'some_name'
-      "class": 'MilightRF24'
-      "port": '/dev/ttyUSB1'
+      "id": "some_id",
+      "name": "some_name",
+      "class": "MilightRF24",
+      "port": "/dev/ttyUSB1",
       "zones": [
           {
             "addr": "5927",
@@ -79,6 +92,16 @@ Get the sketch from here https://github.com/henryk/openmili and change the CE an
     }
 ```
 
+### For Hyperion
+
+```
+    {
+      "id": "some_id",
+      "name": "some_name",
+      "class": "Hyperion",
+      "addr": "xxx.xxx.xxx.xxx"
+    }
+```
 
 ## Features
 
@@ -88,5 +111,5 @@ Get the sketch from here https://github.com/henryk/openmili and change the CE an
   - by color picker (in UI)
   - by name (in rules e.g. red)
   - by hex (in rules e.g. #00FF00)
-  - by teampature variable from weather plugin (in rules e.g. $weather.temperature)
+  - by temperature variable from weather plugin (in rules e.g. $weather.temperature)
 

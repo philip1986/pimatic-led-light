@@ -27,7 +27,7 @@ describe 'IWY Master', ->
   describe '#getMode', ->
     it 'should return the current power state (white by default)', (done) ->
       device.getMode().then (mode) ->
-        mode.should.equal false
+        mode.should.equal 'WHITE'
         done()
 
   describe '#turnOn', ->

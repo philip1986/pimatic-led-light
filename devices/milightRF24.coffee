@@ -26,6 +26,10 @@ module.exports = (env) ->
       
       events.EventEmitter.call(this);
 
+      @gateway.on("Sending", (data) ->
+        env.logger.debug data
+      )
+      
       @gateway.on("Received", (data) ->
         env.logger.debug data
         
@@ -37,7 +41,7 @@ module.exports = (env) ->
     
     getDevice: (config, lastState) ->
       new MilightRF24Zone(config, lastState, @)
-      
+    
     setColor: (id, zone, r,g,b) ->
       env.logger.debug "Sending Color. Addr: #{id} Zone: #{zone} Red: #{r} Green: #{g} Blue: #{b}"
       @gateway.setColor(id, zone, r,g,b)
@@ -67,9 +71,28 @@ module.exports = (env) ->
       @gateway.sendButton(id, zone, button, true)
       
       @_loop(id, zone, button, true, 0, 0, 0,0,0)
+     
+    setNight: (id, zone) ->
+      env.logger.debug "Sending Nightmode. Addr:#{id} Zone:#{zone}"
+      switch zone
+        when 0
+          button = Buttons.AllOff
+        when 1
+          button = Buttons.Group1Off
+        when 2
+          button = Buttons.Group2Off
+        when 3
+          button = Buttons.Group3Off
+        when 4
+          button = Buttons.Group4Off
+      
+      @gateway.sendButton(id, zone, button, true)
+      
+      @_loop(id, zone, button, true, 0, 0, 0,0,0)
       
     turnOn: (id, zone) ->
       env.logger.debug "Sending On. Addr:#{id} Zone:#{zone}"
+      #console.log "Sending On. Addr:#{id} Zone:#{zone}"
       switch zone
         when 0
           button = Buttons.AllOn
@@ -88,6 +111,7 @@ module.exports = (env) ->
       
     turnOff: (id, zone) ->
       env.logger.debug "Sending Off. Addr:#{id} Zone:#{zone}"
+      #console.log "Sending Off. Addr:#{id} Zone:#{zone}"
       switch zone
         when 0
           button = Buttons.AllOff
@@ -124,39 +148,41 @@ module.exports = (env) ->
   # registers for messages from the main class and checks if incoming messages are addressed at the registered ids and zone combination
   # sends changes from the gui to the main class, so that they are send to the arduino
   class MilightRF24Zone extends BaseLedLight
+    NIGHT_MODE: 'NIGHT'
 
     constructor: (@config, lastState, MilightRF24Gateway) ->
+      console.log lastState
       self = @
       @device = @
       @gateway = MilightRF24Gateway
       @zones = @config.zones
       @brightness = 100
       @color = "FFFF00"
+      @onMode = @COLOR_MODE
+      @looping = false
       
       initState = _.clone lastState
       for key, value of lastState
         initState[key] = value.value
       super(initState)
-      if @power then @turnOn() else @turnOff()
+      if @power is 'on' then @turnOn() else @turnOff()
       
       # register for incoming messages
       @gateway.on('ReceivedData', (data) ->
         self.zones.forEach (z) ->
-          
+          #console.log "ReceivedData" , data
           # check if this zone listens on the current zone from config
           unless z.receive is false
-            if z.addr is data.id            
-              if data.button is Buttons.AllOff or (data.button is Buttons.Group1Off and z.zone is 1)  or (data.button is Buttons.Group2Off and z.zone is 2) or (data.button is Buttons.Group3Off and z.zone is 3)  or (data.button is Buttons.Group4Off and z.zone is 4)
-                self.turnOff(false)
-                
-              if (z.zone is data.zone or data.zone is 0) and data.longPress is true and (Buttons.AllOn or Buttons.Group1On or Buttons.Group2On or Buttons.Group3On or Buttons.Group4On)
-                self.setWhite(false)
-                    
+            if z.addr is data.id
               if z.zone is data.zone or data.zone is 0
                 switch data.button 
+                  when data.longPress is true and (Buttons.AllOn or Buttons.Group1On or Buttons.Group2On or Buttons.Group3On or Buttons.Group4On)
+                    self.setWhite(false)
+                  when data.longPress is true and (Buttons.AllOff or Buttons.Group1Off or Buttons.Group2Off or Buttons.Group3Off or Buttons.Group4Off)
+                    self.setNight(false)
                   when Buttons.AllOn, Buttons.Group1On, Buttons.Group2On, Buttons.Group3On, Buttons.Group4On
                     self.turnOn(false)
-                  when Buttons.AllOff
+                  when Buttons.AllOff or (Buttons.Group1Off and z.zone is 1)  or (Buttons.Group2Off and z.zone is 2) or (Buttons.Group3Off and z.zone is 3)  or (Buttons.Group4Off and z.zone is 4)
                     self.turnOff(false)
                   when Buttons.ColorFader or Buttons.FaderReleased
                     self.setColor("#"+self._num2Hex(data.color.r)+self._num2Hex(data.color.g)+self._num2Hex(data.color.b), false)
@@ -171,20 +197,25 @@ module.exports = (env) ->
       a;
       
     _updateState: (attr) ->
+      #console.log "GETSTATE" , @getState()
+      #console.log "GETSTATE ATTR" , attr
       state = _.assign @getState(), attr
       super null, state
 
     turnOn: (send) ->
+      #console.log "turnOn"
       self = @
       
-      @_updateState power: true
+      @_updateState 
+        mode: @onMode
+        power: 'on'
       
       @zones.forEach (z) ->
         unless z.send is false or send is false
           self.gateway.turnOn(z.addr, z.zone)
           
           unless z.zone is 0
-            if self.mode
+            if self.mode is @WHITE_MODE
               color = Color(self.color).rgb()
               self.gateway.setColor(z.addr, z.zone, color.r, color.g, color.b, true)
             else
@@ -195,42 +226,75 @@ module.exports = (env) ->
       Promise.resolve()
 
     turnOff: (send) ->
+      #console.log "turnOff"
       self = @
-      @_updateState power: false
+      
+      @_updateState 
+        mode: @onMode
+        power: 'off'
+        
       @zones.forEach (z) ->
         unless z.send is false or send is false
           self.gateway.turnOff(z.addr, z.zone)
       Promise.resolve()
 
     setColor: (newColor, send) ->
-
       self = @
       color = Color(newColor).rgb()
-      @_updateState
-        mode: @COLOR_MODE
-        color: color
+      
+      if @power
+        @_updateState
+          mode: @COLOR_MODE
+          color: color
+          
+        @onMode = @COLOR_MODE
       
       @zones.forEach (z) ->
         unless z.send is false or send is false
-          self.gateway.setColor(z.addr, z.zone, color.r, color.g, color.b, true) if self.power
+          self.gateway.setColor(z.addr, z.zone, color.r, color.g, color.b, true) if self.power is 'on'
       Promise.resolve()
 
     setWhite: (send) ->        
       self = @
       @_updateState mode: @WHITE_MODE
       
+      @onMode = @WHITE_MODE
+      
       @zones.forEach (z) ->
         unless z.send is false or send is false
-          self.gateway.setWhite(z.addr, z.zone) if self.power
+          self.gateway.setWhite(z.addr, z.zone) if self.power is 'on'
       Promise.resolve()
 
-    setBrightness: (newBrightness, send) ->
+    setNight: (send) ->
       self = @
-      @_updateState brightness: newBrightness
+      @_updateState mode: @NIGHT_MODE
+      
       @zones.forEach (z) ->
         unless z.send is false or send is false
-          self.gateway.setBrightness(z.addr, z.zone, newBrightness) if self.power
+          self.gateway.setNight(z.addr, z.zone)
+      Promise.resolve()
+    
+    setMode: (mode) ->
+      if mode is @NIGHT_MODE
+        @setNight(true)
+      else if mode is @WHITE_MODE
+        @setWhite(true)
+      else if mode is @COLOR_MODE
+        @setColor(@color, true)
+    
+    setBrightness: (newBrightness, send) ->
+      self = @
 
+      if @power is 'on' then @_updateState brightness: newBrightness
+      
+      @zones.forEach (z) ->
+        unless z.send is false or send is false or self.looping is true
+          self.gateway.setBrightness(z.addr, z.zone, newBrightness) if self.power is 'on'
+
+      if send is false
+        @looping = true
+      else
+        @looping = false
       Promise.resolve()
 
   return MilightRF24

@@ -19,7 +19,7 @@ describe 'Milight', ->
     DriverStub.reset()
 
     # set default state
-    device.mode = false
+    device.mode = 'WHITE'
     device.color = ''
     device.power = 'off'
     device.brightness = 100
@@ -34,7 +34,7 @@ describe 'Milight', ->
   describe '#getMode', ->
     it 'should return the current power state (white (false) by default)', (done) ->
       device.getMode().then (mode) ->
-        mode.should.equal false
+        mode.should.equal 'WHITE'
         done()
 
   describe '#turnOn', ->
@@ -46,7 +46,7 @@ describe 'Milight', ->
       DriverStub.sendCommands.firstCall.args[0].should.eql nodeMilight.commands.rgbw.on(config.zone)
       # set device into white mode
       DriverStub.sendCommands.secondCall.args[0].should.eql nodeMilight.commands.rgbw.whiteMode(config.zone)
-      # set brigghtness
+      # set brightness
       DriverStub.sendCommands.thirdCall.args[0].should.eql nodeMilight.commands.rgbw.brightness(device.brightness)
 
   describe '#turnOff', ->

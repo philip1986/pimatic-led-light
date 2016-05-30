@@ -16,7 +16,7 @@ module.exports = (env) ->
     attributes:
       power:
         description: 'the current state of the light'
-        type: t.boolean
+        type: t.string
         labels: ['on', 'off']
       color:
         description: 'color of the light'
@@ -24,8 +24,7 @@ module.exports = (env) ->
         unit: 'hex color'
       mode:
         description: 'mode of the light'
-        type: t.boolean
-        labels: ['color', 'white']
+        type: t.string
       brightness:
        description: 'brightness of the light'
        type: t.number
@@ -38,7 +37,7 @@ module.exports = (env) ->
         description: 'returns the current state of the light'
         returns:
           state:
-            type: t.boolean
+            type: t.string
       getMode:
         description: 'returns the light mode'
       turnOn:
@@ -66,6 +65,7 @@ module.exports = (env) ->
             type: t.number
 
     constructor: (initState) ->
+      #console.log initState
       unless @device
         throw new Error 'no device initialized'
 
@@ -73,9 +73,9 @@ module.exports = (env) ->
       @id = @config.id
 
       @power = initState?.power or 'off'
-      @color = initState?.color or ''
+      @color = initState?.color or Color("#FFFFFF").hexString()
       @brightness = initState?.brightness or 100
-      @mode = initState?.mode or false
+      @mode = initState?.mode or @WHITE_MODE
 
       super()
 
@@ -86,35 +86,31 @@ module.exports = (env) ->
 
     _setPower: (powerState) ->
       #console.log "POWER" , powerState
+      
       unless @power is powerState
         @power = powerState
-        @emit "power", if powerState then 'on' else 'off'
+        @emit "power", powerState
 
     _updateState: (err, state) ->
       env.logger.error err if err
 
       if state
-        if state.mode is @WHITE_MODE
-          @_setAttribute 'mode', false
-          hexColor = ''
-        else if state.mode is @COLOR_MODE
-          @_setAttribute 'mode', true
-          if state.color is ''
-            hexColor = '#FFFFFF'
-          else
-            hexColor = Color(state.color).hexString()
+        @_setAttribute 'mode', state.mode
+        
+        if state.color?
+          @_setAttribute 'color', Color(state.color).hexString()
+
         #console.log "hexColor:", hexColor
         @_setPower state.power
         @_setAttribute 'brightness', state.brightness
-        @_setAttribute 'color', hexColor
-
+        
     getPower: -> Promise.resolve @power
     getColor: -> Promise.resolve @color
     getMode: -> Promise.resolve @mode
     getBrightness: -> Promise.resolve @brightness
 
     getState: ->
-      mode: if @mode then @COLOR_MODE else @WHITE_MODE
+      mode: @mode
       color: if _.isString(@color) and not _.isEmpty(@color) then Color(@color).rgb() else ''
       power: @power
       brightness: @brightness

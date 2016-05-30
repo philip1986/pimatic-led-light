@@ -1,8 +1,8 @@
 # #led-light-plugin configuration options
 module.exports = {
   title: "Led light device config schemas"
-  LedLight: {
-    title: "LedLight"
+  IwyMaster: {
+    title: "IwyMaster LedLight"
     type: "object"
     properties:
       addr:
@@ -24,6 +24,9 @@ module.exports = {
     title: "Milight"
     type: "object"
     properties:
+      port:
+        description: "USB port where the gateway is attached"
+        type: "string"
       zones:
         description: "The switch protocols to use."
         type: "array"
@@ -34,9 +37,6 @@ module.exports = {
           properties:
             addr:
               description: "Address of light device"
-              type: "string"
-            port:
-              description: "USB port where the gateway is attached"
               type: "string"
             zone:
               description: "Zone [0 - 4], 0 = switches all zones"
@@ -71,5 +71,18 @@ module.exports = {
     title: "DummyLedLight"
     type: "object"
     properties: {}
+  },
+  HyperionLedLight: {
+    title: "Hyperion",
+    type: "object"
+    properties:
+      addr:
+        description: "IP-Address of hyperion device"
+        type: "string"
+        default: "localhost"
+      port:
+        description: "Port of hyperion device"
+        type: "string",
+        default: "19444"
   }
 }

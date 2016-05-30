@@ -83,7 +83,7 @@ module.exports = (env) ->
                   color = color_schema[s]
                   match = m.getFullMatch()
 
-              # color by temprature from variable like $weather.temperature = 30
+              # color by temperature from variable like $weather.temperature = 30
               (m) ->
                 m.match ['temperature based color by variable '], (m) ->
                   m.matchVariable (m, s) ->
