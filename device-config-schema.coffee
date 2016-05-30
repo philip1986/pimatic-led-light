@@ -24,6 +24,9 @@ module.exports = {
     title: "Milight"
     type: "object"
     properties:
+      port:
+        description: "USB port where the gateway is attached"
+        type: "string"
       zones:
         description: "The switch protocols to use."
         type: "array"
@@ -34,9 +37,6 @@ module.exports = {
           properties:
             addr:
               description: "Address of light device"
-              type: "string"
-            port:
-              description: "USB port where the gateway is attached"
               type: "string"
             zone:
               description: "Zone [0 - 4], 0 = switches all zones"
