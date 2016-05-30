@@ -16,7 +16,7 @@ module.exports = (env) ->
     attributes:
       power:
         description: 'the current state of the light'
-        type: t.boolean
+        type: t.string
         labels: ['on', 'off']
       color:
         description: 'color of the light'
@@ -37,7 +37,7 @@ module.exports = (env) ->
         description: 'returns the current state of the light'
         returns:
           state:
-            type: t.boolean
+            type: t.string
       getMode:
         description: 'returns the light mode'
       turnOn:
@@ -65,6 +65,7 @@ module.exports = (env) ->
             type: t.number
 
     constructor: (initState) ->
+      #console.log initState
       unless @device
         throw new Error 'no device initialized'
 
@@ -72,7 +73,7 @@ module.exports = (env) ->
       @id = @config.id
 
       @power = initState?.power or 'off'
-      @color = initState?.color or ''
+      @color = initState?.color or Color("#FFFFFF").hexString()
       @brightness = initState?.brightness or 100
       @mode = initState?.mode or @WHITE_MODE
 
@@ -85,9 +86,10 @@ module.exports = (env) ->
 
     _setPower: (powerState) ->
       #console.log "POWER" , powerState
+      
       unless @power is powerState
         @power = powerState
-        @emit "power", if powerState then 'on' else 'off'
+        @emit "power", powerState
 
     _updateState: (err, state) ->
       env.logger.error err if err
@@ -95,7 +97,7 @@ module.exports = (env) ->
       if state
         @_setAttribute 'mode', state.mode
         
-        if state.color is not ''
+        if state.color?
           @_setAttribute 'color', Color(state.color).hexString()
 
         #console.log "hexColor:", hexColor

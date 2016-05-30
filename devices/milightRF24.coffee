@@ -92,6 +92,7 @@ module.exports = (env) ->
       
     turnOn: (id, zone) ->
       env.logger.debug "Sending On. Addr:#{id} Zone:#{zone}"
+      #console.log "Sending On. Addr:#{id} Zone:#{zone}"
       switch zone
         when 0
           button = Buttons.AllOn
@@ -110,6 +111,7 @@ module.exports = (env) ->
       
     turnOff: (id, zone) ->
       env.logger.debug "Sending Off. Addr:#{id} Zone:#{zone}"
+      #console.log "Sending Off. Addr:#{id} Zone:#{zone}"
       switch zone
         when 0
           button = Buttons.AllOff
@@ -149,6 +151,7 @@ module.exports = (env) ->
     NIGHT_MODE: 'NIGHT'
 
     constructor: (@config, lastState, MilightRF24Gateway) ->
+      console.log lastState
       self = @
       @device = @
       @gateway = MilightRF24Gateway
@@ -162,15 +165,15 @@ module.exports = (env) ->
       for key, value of lastState
         initState[key] = value.value
       super(initState)
-      if @power then @turnOn() else @turnOff()
+      if @power is 'on' then @turnOn() else @turnOff()
       
       # register for incoming messages
       @gateway.on('ReceivedData', (data) ->
         self.zones.forEach (z) ->
-          
+          #console.log "ReceivedData" , data
           # check if this zone listens on the current zone from config
           unless z.receive is false
-            if z.addr is data.id                          
+            if z.addr is data.id
               if z.zone is data.zone or data.zone is 0
                 switch data.button 
                   when data.longPress is true and (Buttons.AllOn or Buttons.Group1On or Buttons.Group2On or Buttons.Group3On or Buttons.Group4On)
@@ -194,22 +197,25 @@ module.exports = (env) ->
       a;
       
     _updateState: (attr) ->
+      #console.log "GETSTATE" , @getState()
+      #console.log "GETSTATE ATTR" , attr
       state = _.assign @getState(), attr
       super null, state
 
     turnOn: (send) ->
+      #console.log "turnOn"
       self = @
       
       @_updateState 
         mode: @onMode
-        power: true
+        power: 'on'
       
       @zones.forEach (z) ->
         unless z.send is false or send is false
           self.gateway.turnOn(z.addr, z.zone)
           
           unless z.zone is 0
-            if self.mode
+            if self.mode is @WHITE_MODE
               color = Color(self.color).rgb()
               self.gateway.setColor(z.addr, z.zone, color.r, color.g, color.b, true)
             else
@@ -220,11 +226,12 @@ module.exports = (env) ->
       Promise.resolve()
 
     turnOff: (send) ->
+      #console.log "turnOff"
       self = @
       
       @_updateState 
         mode: @onMode
-        power: false
+        power: 'off'
         
       @zones.forEach (z) ->
         unless z.send is false or send is false
@@ -244,7 +251,7 @@ module.exports = (env) ->
       
       @zones.forEach (z) ->
         unless z.send is false or send is false
-          self.gateway.setColor(z.addr, z.zone, color.r, color.g, color.b, true) if self.power
+          self.gateway.setColor(z.addr, z.zone, color.r, color.g, color.b, true) if self.power is 'on'
       Promise.resolve()
 
     setWhite: (send) ->        
@@ -255,7 +262,7 @@ module.exports = (env) ->
       
       @zones.forEach (z) ->
         unless z.send is false or send is false
-          self.gateway.setWhite(z.addr, z.zone) if self.power
+          self.gateway.setWhite(z.addr, z.zone) if self.power is 'on'
       Promise.resolve()
 
     setNight: (send) ->
@@ -278,11 +285,11 @@ module.exports = (env) ->
     setBrightness: (newBrightness, send) ->
       self = @
 
-      if @power then @_updateState brightness: newBrightness
+      if @power is 'on' then @_updateState brightness: newBrightness
       
       @zones.forEach (z) ->
         unless z.send is false or send is false or self.looping is true
-          self.gateway.setBrightness(z.addr, z.zone, newBrightness) if self.power
+          self.gateway.setBrightness(z.addr, z.zone, newBrightness) if self.power is 'on'
 
       if send is false
         @looping = true

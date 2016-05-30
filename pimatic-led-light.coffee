@@ -11,8 +11,9 @@ module.exports = (env) ->
   HyperionLedLight = require('./devices/hyperion')(env)
 
   # import preadicares and actions
-  ColorActionProvider = require('./predicates_and_actions/color_action')(env)
   ModeActionProvider = require('./predicates_and_actions/mode_action')(env)
+  ColorActionProvider = require('./predicates_and_actions/color_action')(env)
+  
 
   class LedLightPlugin extends env.plugins.Plugin
 
@@ -51,8 +52,7 @@ module.exports = (env) ->
 
       @framework.ruleManager.addActionProvider(new ModeActionProvider(@framework))
       @framework.ruleManager.addActionProvider(new ColorActionProvider(@framework))
-
-
+      
       # wait till all plugins are loaded
       @framework.on "after init", =>
         # Check if the mobile-frontend was loaded and get a instance
