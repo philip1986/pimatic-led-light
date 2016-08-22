@@ -124,6 +124,7 @@ module.exports = (env) ->
     setWhite: -> throw new Error "Function 'setWhite' is not implemented!"
     setBrightness: (brightnessValue) -> throw new Error "Function 'setBrightness' is not implemented!"
     changeDimlevelTo: (dimLevel) -> @setBrightness(dimLevel)
+    getDimlevel: -> @setBrightness()
 
     toggle: ->
       if @power is 'off' then @turnOn() else @turnOff()
