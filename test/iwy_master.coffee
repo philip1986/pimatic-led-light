@@ -21,7 +21,7 @@ describe 'IWY Master', ->
   describe '#getPower', ->
     it 'should return the current power state (false by default)', (done) ->
       device.getPower().then (power) ->
-        power.should.equal 'off'
+        power.should.equal off
         done()
 
   describe '#getMode', ->
@@ -37,19 +37,19 @@ describe 'IWY Master', ->
 
   describe '#turnOff', ->
     it 'should call the corresponding driver method', ->
-      device.power = 'on'
+      device.power = on
       device.turnOff()
       DriverStub.switchOff.calledOnce.should.equal true
 
   describe '#toggle', ->
     it 'should switch the power state to ON when it is OFF before', ->
-      device.power = 'off'
+      device.power = off
       device.toggle()
       DriverStub.switchOn.calledOnce.should.equal true
       DriverStub.switchOff.calledOnce.should.equal false
 
     it 'should switch the power state to OFF when it is ON before', ->
-      device.power = 'on'
+      device.power = on
       device.toggle()
       DriverStub.switchOn.calledOnce.should.equal false
       DriverStub.switchOff.calledOnce.should.equal true

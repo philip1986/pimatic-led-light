@@ -21,14 +21,17 @@ describe 'Milight', ->
     # set default state
     device.mode = false
     device.color = ''
-    device.power = 'off'
+    device.power = on
     device.brightness = 100
 
 
   describe '#getPower', ->
-    it 'should return the current power state (off by default)', (done) ->
+    it 'should return the current power state', (done) ->
       device.getPower().then (power) ->
-        power.should.equal 'off'
+        power.should.equal on
+      device.power = off
+      device.getPower().then (power) ->
+        power.should.equal off
         done()
 
   describe '#getMode', ->
@@ -57,7 +60,7 @@ describe 'Milight', ->
 
   describe '#toggle', ->
     it 'should switch the power state to ON when it is OFF before', ->
-      device.power = 'off'
+      device.power = off
       device.toggle()
 
       DriverStub.sendCommands.calledThrice.should.equal true
@@ -65,7 +68,6 @@ describe 'Milight', ->
       DriverStub.sendCommands.firstCall.args[0].should.eql nodeMilight.commands.rgbw.on(config.zone)
 
     it 'should switch the power state to OFF when it is ON before', ->
-      device.power = 'on'
       device.toggle()
 
       DriverStub.sendCommands.calledOnce.should.equal true
@@ -85,7 +87,6 @@ describe 'Milight', ->
   describe '#setColor', ->
     it 'should call the corresponding driver method', ->
       device.setColor('#AAAAAA')
-      device.power = 'on'
 
       DriverStub.sendCommands.calledOnce.should.equal true
       DriverStub.sendCommands.firstCall.args.should.eql [
@@ -94,15 +95,12 @@ describe 'Milight', ->
       ]
 
     context 'device power is "off"', ->
-      it 'should call the corresponding driver method', ->
+      it 'should not call the corresponding driver method', ->
+        device.power = off
         device.setColor('#AAAAAA')
-        device.power = 'off'
 
-        DriverStub.sendCommands.calledOnce.should.equal true
-        DriverStub.sendCommands.firstCall.args.should.eql [
-          nodeMilight.commands.rgbw.on(config.zone)
-          nodeMilight.commands.rgbw.rgb255(Number('0xAA'), Number('0xAA'), Number('0xAA'))
-        ]
+        DriverStub.sendCommands.notCalled.should.equal true
+
 
   describe '#setBrightness', ->
     it 'should call the corresponding driver method', ->

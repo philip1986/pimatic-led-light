@@ -39,13 +39,16 @@ describe 'MilightRF24', ->
     # set default state
     device.mode = false
     device.color = ''
-    device.power = 'off'
+    device.power = on
     device.brightness = 100
 
   describe '#getPower', ->
     it 'should return the current power state (off by default)', (done) ->
       device.getPower().then (power) ->
-        power.should.equal 'off'
+        power.should.equal on
+      device.power = off
+      device.getPower().then (power) ->
+        power.should.equal off
         done()
 
   describe '#getMode', ->
@@ -74,7 +77,7 @@ describe 'MilightRF24', ->
 
   describe '#toggle', ->
     it 'should switch the power state to ON when it is OFF before', ->
-      device.power = 'off'
+      device.power = off
       device.toggle()
 
       DriverStub.sendButton.calledTwice.should.equal true
@@ -83,7 +86,6 @@ describe 'MilightRF24', ->
       DriverStub.sendButton.secondCall.args.should.eql [ '485D', 0, 1, false ]
 
     it 'should switch the power state to OFF when it is ON before', ->
-      device.power = 'on'
       device.toggle()
 
       DriverStub.sendButton.calledTwice.should.equal true
@@ -102,7 +104,6 @@ describe 'MilightRF24', ->
 
   describe '#setColor', ->
     it 'should call the corresponding driver method', ->
-      device.power = 'on'
       device.setColor('#AAAAAA')
 
       DriverStub.setColor.calledTwice.should.equal true
@@ -111,18 +112,14 @@ describe 'MilightRF24', ->
       DriverStub.setColor.secondCall.args.should.eql [ '485D', 0, 170, 170, 170 ]
 
     context 'device power is "off"', ->
-      it 'should call the corresponding driver method', ->
-        device.power = 'off'
+      it 'should not call the corresponding driver method', ->
+        device.power = off
         device.setColor('#AAAAAA')
 
-        DriverStub.setColor.calledTwice.should.equal true
-
-        DriverStub.setColor.firstCall.args.should.eql [ '5927', 0, 170, 170, 170 ]
-        DriverStub.setColor.secondCall.args.should.eql [ '485D', 0, 170, 170, 170 ]
+        DriverStub.setColor.notCalled.should.equal true
 
   describe '#setBrightness', ->
     it 'should call the corresponding driver method', ->
-      device.power = 'on'
       device.setBrightness(50)
 
       DriverStub.setBrightness.calledTwice.should.equal true
@@ -130,15 +127,12 @@ describe 'MilightRF24', ->
       DriverStub.setBrightness.firstCall.args.should.eql [ '5927', 0, 50 ]
       DriverStub.setBrightness.secondCall.args.should.eql [ '485D', 0, 50 ]
 
-    context 'device power is "off"', ->
-      it 'should call the corresponding driver method', ->
-        device.power = 'off'
+    context 'device power is off', ->
+      it 'should not call the corresponding driver method', ->
+        device.power = off
         device.setBrightness(50)
 
-        DriverStub.setBrightness.calledTwice.should.equal true
-
-        DriverStub.setBrightness.firstCall.args.should.eql [ '5927', 0, 50 ]
-        DriverStub.setBrightness.secondCall.args.should.eql [ '485D', 0, 50 ]
+        DriverStub.setColor.notCalled.should.equal true
 
   describe '#changeDimlevelTo', ->
     it 'should call the corresponding driver method', ->

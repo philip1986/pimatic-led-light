@@ -71,7 +71,7 @@ module.exports = (env) ->
       @name = @config.name
       @id = @config.id
 
-      @power = initState?.power or 'off'
+      @power = initState?.power or off
       @color = initState?.color or ''
       @brightness = initState?.brightness or 100
       @mode = initState?.mode or false
@@ -84,10 +84,9 @@ module.exports = (env) ->
         @emit attributeName, value
 
     _setPower: (powerState) ->
-      #console.log "POWER" , powerState
       unless @power is powerState
         @power = powerState
-        @emit "power", if powerState then 'on' else 'off'
+        @emit "power", powerState
 
     _updateState: (err, state) ->
       env.logger.error err if err
@@ -127,7 +126,7 @@ module.exports = (env) ->
     getDimlevel: -> @setBrightness()
 
     toggle: ->
-      if @power is 'off' then @turnOn() else @turnOff()
+      if @power is off then @turnOn() else @turnOff()
       Promise.resolve()
 
   return BaseLedLight

@@ -23,12 +23,12 @@ module.exports = (env) ->
       @device.getState @_updateState.bind(@)
 
     turnOn: ->
-      return Promise.resolve() if @power is 'on'
+      return Promise.resolve() if @power is on
       @device.switchOn @_updateState.bind(@)
       Promise.resolve()
 
     turnOff: ->
-      return Promise.resolve() if @power is 'off'
+      return Promise.resolve() if @power is off
       @device.switchOff @_updateState.bind(@)
       Promise.resolve()
 

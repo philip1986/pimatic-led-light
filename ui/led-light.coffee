@@ -3,7 +3,7 @@ $(document).on 'templateinit', (event) ->
   # define the item class
   class LedLightItem extends pimatic.DeviceItem
     constructor: (templData, @device) ->
-      super
+      super(templData, @device)
 
       @id = templData.deviceId
 
@@ -88,7 +88,7 @@ $(document).on 'templateinit', (event) ->
         el.val(@[attributeString]()).trigger 'change', [origin: 'remote']
 
     _setPower: (state) ->
-      if state is 'on'
+      if state is on
         @device.rest.turnOn {}, global: no
       else
         @device.rest.turnOff {}, global: no
