@@ -85,7 +85,7 @@ module.exports = (env) ->
       if @_connected
         return Promise.resolve(@hyperion)
       else
-        @hyperion = new Hyperion(@config.addr, @config.port)
+        @hyperion = new Hyperion(@config.addr, @config.port, @config.priority)
         @hyperion.on 'error', (error) =>
           env.logger.error("Error connecting to hyperion.")
           if (error?)
