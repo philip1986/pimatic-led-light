@@ -127,7 +127,7 @@ module.exports = (env) ->
     getDimlevel: -> @setBrightness()
 
     toggle: ->
-      if @power is 'off' then @turnOn() else @turnOff()
+      if not @power or @power is 'off' then @turnOn() else @turnOff()
       Promise.resolve()
 
   return BaseLedLight
