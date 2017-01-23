@@ -78,6 +78,9 @@ module.exports = (env) ->
 
       super()
 
+    destroy: () ->
+      super()
+
     _setAttribute: (attributeName, value) ->
       unless @[attributeName] is value
         @[attributeName] = value

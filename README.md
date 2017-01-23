@@ -9,6 +9,7 @@ Currently supported:
   - [MilightRF24] (https://github.com/henryk/openmili)
   - [Blinkstick] (https://www.blinkstick.com)
   - [Hyperion] (https://github.com/tvdzwan/hyperion/wiki)
+  - [Yeelight] (http://www.yeelight.com/)
 
 ## Installation
 
@@ -101,6 +102,17 @@ Get the sketch from here https://github.com/henryk/openmili and change the CE an
       "class": "Hyperion",
       "addr": "xxx.xxx.xxx.xxx",
       "priority": 100 // Only if you want to change the used priority, default is 100.
+    }
+```
+
+### For Yeelight Wifi Color Bulbs
+
+```
+    {
+      "id": "some_id",
+      "name": "some_name",
+      "class": "Yeelight",
+      "addr": "xxx.xxx.xxx.xxx"
     }
 ```
 

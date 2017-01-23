@@ -17,14 +17,15 @@
     "test": "node_modules/.bin/mocha test"
   },
   "dependencies": {
+    "blinkstick": "1.1.3",
     "cassert": "^0.1.2",
     "color": "^0.11.1",
+    "event-to-promise": "0.7.0",
+    "hyperion-client": "1.0.3",
     "iwy_master": "0.2.3",
     "node-milight-promise": ">=0.0.3",
     "node-milight-rf24": ">=0.1.1",
-    "blinkstick": "1.1.3",
-    "hyperion-client": "1.0.3",
-    "event-to-promise": "0.7.0"
+    "node-yeelight": "^1.0.4"
   },
   "peerDependencies": {
     "pimatic": ">=0.9.0 <1.0.0"
