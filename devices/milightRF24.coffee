@@ -10,7 +10,7 @@ module.exports = (env) ->
   
   # Handles the connection to the arduino (receives and sends messages)
   class MilightRF24 extends events.EventEmitter
-    # singelton gatway connetion
+    # singleton gateway connection
     @connectToGateway: (config) ->
       unless MilightRF24.instance
         MilightRF24.instance = new MilightRF24 config
