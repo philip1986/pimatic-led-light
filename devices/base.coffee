@@ -95,7 +95,7 @@ module.exports = (env) ->
     _updateState: (err, state) ->
       env.logger.error err if err
 
-      if state
+      if state?
         if state.mode is @WHITE_MODE
           @_setAttribute 'mode', false
           hexColor = ''
