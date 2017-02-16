@@ -88,5 +88,13 @@ module.exports = {
         description: "Priority used for hyperion calls"
         type: "number"
         default: 100
+  },
+  Yeelight: {
+    title: "Yeelight"
+    type: "object"
+    properties:
+      addr:
+        description: "IP-Address of light device"
+        type: "string"
   }
 }

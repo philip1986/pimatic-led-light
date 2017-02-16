@@ -3,7 +3,7 @@
   "description": "Control LED lights",
   "author": "Philip Patzer <philip.patzer@gmail.com> (https://github.com/philip1986)",
   "main": "pimatic-led-light",
-  "version": "0.9.3",
+  "version": "0.9.5",
   "license": "GPL-2.0",
   "repository": {
     "type": "git",
@@ -17,14 +17,15 @@
     "test": "node_modules/.bin/mocha test"
   },
   "dependencies": {
+    "blinkstick": "1.1.3",
     "cassert": "^0.1.2",
     "color": "^0.11.1",
+    "event-to-promise": "0.7.0",
+    "hyperion-client": "1.0.3",
     "iwy_master": "0.2.3",
     "node-milight-promise": ">=0.0.3",
     "node-milight-rf24": ">=0.1.1",
-    "blinkstick": "1.1.3",
-    "hyperion-client": "1.0.3",
-    "event-to-promise": "0.7.0"
+    "node-yeelight": "git+https://github.com/mwittig/node-yeelight.git"
   },
   "peerDependencies": {
     "pimatic": ">=0.9.0 <1.0.0"
