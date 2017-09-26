@@ -21,11 +21,11 @@ module.exports = (env) ->
 
       @framework.deviceManager.registerDeviceClass 'IwyMaster',
         configDef: deviceConfigDef.IwyMaster
-        createCallback: (config) -> return new IwyMaster(config)
+        createCallback: (config, lastState) -> return new IwyMaster(config, lastState)
 
       @framework.deviceManager.registerDeviceClass 'Wifi370',
         configDef: deviceConfigDef.Wifi370
-        createCallback: (config) -> return new Wifi370(config)
+        createCallback: (config, lastState) -> return new Wifi370(config, lastState)
 
       @framework.deviceManager.registerDeviceClass 'Milight',
         configDef: deviceConfigDef.Milight
@@ -34,20 +34,20 @@ module.exports = (env) ->
       @framework.deviceManager.registerDeviceClass 'MilightRF24',
         configDef: deviceConfigDef.MilightRF24
         createCallback: (config, lastState) ->
-          return MilightRF24.connectToGateway(config).getDevice(config, lastState)
+          return MilightRF24.connectToGateway(config, lastState).getDevice(config, lastState)
 
       unless process.env.NODE_ENV is 'travis-test'
         @framework.deviceManager.registerDeviceClass 'Blinkstick',
           configDef: deviceConfigDef.Blinkstick
-          createCallback: (config) -> return new Blinkstick(config)
+          createCallback: (config, lastState) -> return new Blinkstick(config, lastState)
 
       @framework.deviceManager.registerDeviceClass 'DummyLedLight',
         configDef: deviceConfigDef.DummyLedLight
-        createCallback: (config) -> return new DummyLedLight(config)
+        createCallback: (config, lastState) -> return new DummyLedLight(config, lastState)
 
       @framework.deviceManager.registerDeviceClass 'Hyperion',
         configDef: deviceConfigDef.HyperionLedLight
-        createCallback: (config) -> return new HyperionLedLight(config)
+        createCallback: (config, lastState) -> return new HyperionLedLight(config, lastState)
 
       @framework.deviceManager.registerDeviceClass 'Yeelight',
         configDef: deviceConfigDef.Yeelight
